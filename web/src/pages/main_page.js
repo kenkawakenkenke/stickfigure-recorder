@@ -25,6 +25,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+function PageDescription() {
+    return <div>
+        Hello
+</div>
+}
+
 function MainPage() {
     const classes = useStyles();
 
@@ -36,6 +42,7 @@ function MainPage() {
     return <div className={classes.root}>
         <div>
             <Typography variant="h3">Stickfigure Recorder</Typography>
+            <PageDescription />
         </div>
 
         {/* Record */}
