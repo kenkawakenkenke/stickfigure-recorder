@@ -3,13 +3,13 @@ import {
     useState,
 } from "react";
 import {
-    Button, Checkbox, FormControlLabel
+    Button, Checkbox, FormControlLabel, FormControl, RadioGroup, Radio, FormLabel
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "../detection/pose_canvas.js";
 import useAnimationFrame from "../common/animation_frame_hook.js";
 import CameraVideo from "../detection/camera_reader.js";
-import usePosenet from "../detection/posenet_hook.js";
+import usePosenet, { posenetConfigs } from "../detection/posenet_hook.js";
 import FeatureSmoother from "../detection/smoother.js";
 import Loader from 'react-loader-spinner';
 import { normalizeTime } from "../detection/recording_editor.js";
@@ -31,16 +31,20 @@ const useStyles = makeStyles((theme) => ({
         display: "inline-block",
     },
     videoCanvas: {
+        width: "80%",
+        height: "80%",
     },
     canvas: {
         position: "absolute",
         top: "0",
         left: "0",
+        width: "80%",
     },
     canvasWhenDebug: {
         position: "absolute",
         top: "0px",
         left: "100px",
+        width: "80%",
     },
     debugCanvas: {
         position: "absolute",
@@ -53,12 +57,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function useRecording(videoElement, isRecording, smoothingWindow) {
+function useRecording(posenet, videoElement, isRecording, smoothingWindow) {
     const { t, i18n } = useTranslation();
     const [recording, setRecording] = useState({
         poses: [],
     });
-    const posenet = usePosenet();
 
     // Return a "waiting" message if we're told to record but we're not ready.
     const loadingMessage = isRecording && (!posenet || !videoElement) ?
@@ -71,14 +74,10 @@ function useRecording(videoElement, isRecording, smoothingWindow) {
 
     const smoothersRef = useRef({});
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
-        // console.log(timeSinceLastFrameMs, timeSinceStartMs);
         const net = posenet;
-        const imageScaleFactor = 1;
-        const outputStride = 32;
-        const flipHorizontal = false;
         videoElement.width = videoElement.videoWidth;
         videoElement.height = videoElement.videoHeight;
-        const pose = await net.estimateSinglePose(videoElement, imageScaleFactor, flipHorizontal, outputStride);
+        const pose = await net.estimateSinglePose(videoElement);
         pose.videoWidth = videoElement.videoWidth;
         pose.videoHeight = videoElement.videoHeight;
         pose.t = timeSinceStartMs;
@@ -118,8 +117,10 @@ function RecorderModule({ recordingCallback }) {
 
     const [isRecording, setIsRecording] = useState(false);
 
+    const [posenetLevel, setPosenetLevel] = useState("high");
+    const posenet = usePosenet(posenetLevel);
     const [videoElement, setVideoElement] = useState();
-    const [recording, loadingMessage] = useRecording(videoElement, isRecording, SMOOTHING_WINDOW);
+    const [recording, loadingMessage] = useRecording(posenet, videoElement, isRecording, SMOOTHING_WINDOW);
 
     const startRecord = () => {
         setIsRecording(true);
@@ -144,11 +145,27 @@ function RecorderModule({ recordingCallback }) {
     return <div className={classes.root}>
 
         <div>
-            {!isRecording && <Button onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>}
+            {!isRecording && <div>
+                <div>
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">{t("PosenetAccuracy")}</FormLabel>
+                        <RadioGroup row aria-label="gender" value={posenetLevel} onChange={(event) => setPosenetLevel(event.target.value)}>
+                            {Object.keys(posenetConfigs).map(config =>
+                                <FormControlLabel key={`config_${config}`} value={config} control={<Radio />} label={t(`PosenetAccuracy_${config}`)} />
+                            )}
+                        </RadioGroup>
+                    </FormControl>
+                </div>
+                {!posenet && <div>
+                    {t("Loading PoseNet")}
+                    <Loader type="Oval" color="#888888" height={48} width={48}></Loader></div>}
+                <Button disabled={!posenet} onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>
+            </div>}
             {isRecording && recording.poses.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">{t("Stop")}</Button>}
         </div>
 
-        {isRecording &&
+        {
+            isRecording &&
             <div className={classes.canvasContainer}>
                 <div>
                     <FormControlLabel

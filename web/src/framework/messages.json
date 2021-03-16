@@ -18,7 +18,13 @@
             "Export":"Export",
             "Set the start and end range to export":"Set the start and end range to export:",
             "Do export gif": "Export .GIF file",
-            "Rendering GIF": "Rendering GIF..."
+            "Rendering GIF": "Rendering GIF...",
+            "PosenetAccuracy": "Posenet accuracy",
+            "PosenetAccuracy_low": "Low (for mobile)",
+            "PosenetAccuracy_medium": "Medium (for Medium PCs)",
+            "PosenetAccuracy_high": "High (for High-end PCs)",
+            "PosenetAccuracy_superHigh": "Superb (for Super high-end PCs)",
+            "Loading PoseNet": "Loading PoseNet"
         }
     },
     "ja": {
@@ -40,7 +46,13 @@
             "Export":"出力",
             "Set the start and end range to export":"出力する開始と終了位置を選んでください：",
             "Do export gif": "GIFファイルを出力",
-            "Rendering GIF": "GIFファイルを準備中..."
+            "Rendering GIF": "GIFファイルを準備中...",
+            "PosenetAccuracy": "Posenet精度",
+            "PosenetAccuracy_low": "低（スマホ）",
+            "PosenetAccuracy_medium": "中（中級パソコン）",
+            "PosenetAccuracy_high": "高（ハイエンドPC）",
+            "PosenetAccuracy_superHigh": "超（超ハイエンドPC）",
+            "Loading PoseNet": "Posenetロード中・・・"
         }
     }
 }
