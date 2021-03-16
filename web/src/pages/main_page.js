@@ -90,7 +90,6 @@ function PageDescription() {
                 </Trans>
             </p>
             <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank" rel="noreferrer"><img src="https://gh-card.dev/repos/kenkawakenkenke/stickfigure-recorder.svg" alt="stickfigure recorder github info" /></a>
-            <AdsCard />
         </div>
     </div >
 }
@@ -133,6 +132,7 @@ function MainPage() {
             <Typography variant="h4">3. {t("Export")}</Typography>
             {recording && <GifRenderModule recording={recording} />}
         </Paper >
+        <AdsCard />
 
     </div >;
 }
