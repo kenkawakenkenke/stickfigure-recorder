@@ -35,6 +35,24 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+// From: https://qiita.com/qrusadorz/items/14972b6e069feaf777a9
+function AdsCard(props) {
+    useEffect(() => {
+        if (window.adsbygoogle/* && process.env.NODE_ENV !== "development"*/) {
+            window.adsbygoogle.push({});
+        }
+    }, [])
+
+    return (
+        <ins className="adsbygoogle"
+            style={{ "display": "block" }}
+            data-ad-client={process.env.REACT_APP_GOOGLE_AD_CLIENT}
+            data-ad-slot={process.env.REACT_APP_GOOGLE_AD_SLOT}
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+    );
+}
+
 function PageDescription() {
     const classes = useStyles();
     return <div className={classes.descriptionCard}>
@@ -58,6 +76,7 @@ function PageDescription() {
                 but couldn't find any broad-enough collection of gifs.</p>
             <p>The entire website is open sourced here: </p>
             <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank"><img src="https://gh-card.dev/repos/kenkawakenkenke/stickfigure-recorder.svg" /></a>
+            <AdsCard />
         </div>
     </div>
 }
