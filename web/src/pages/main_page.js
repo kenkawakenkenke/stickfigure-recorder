@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
     },
     smallGif: {
         width: "80px",
+    },
+    largeGif: {
+        maxWidth: "100%",
     }
 }));
 
@@ -68,7 +71,7 @@ function PageDescription() {
         </div>
         <Trans>Create animated stickfigure gifs!</Trans>
         <div>
-            <img src="/imgs/stickfigure_recording.gif" alt="stickfigure recording gif" />
+            <img src="/imgs/stickfigure_recording.gif" alt="stickfigure recording gif" className={classes.largeGif} />
         </div>
         <div>
             <p>
