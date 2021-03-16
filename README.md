@@ -1,2 +1,2 @@
-# webcamstickman
-Website to generate stickman gifs from webcam video.
+# Stickfigure Recorder
+Website to generate stickfigure gifs from webcam video.
