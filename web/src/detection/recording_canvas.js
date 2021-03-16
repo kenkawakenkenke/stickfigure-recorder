@@ -1,11 +1,8 @@
 import {
-    useEffect,
     useRef,
     useState,
-    forwardRef,
 } from "react";
 import {
-    Button, Paper, Typography,
     Slider
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';

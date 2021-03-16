@@ -1,8 +1,6 @@
 import {
     useEffect,
     useRef,
-    useState,
-    forwardRef,
 } from "react";
 
 import paintPose from "./pose_painter.js";

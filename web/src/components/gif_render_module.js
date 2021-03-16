@@ -1,11 +1,9 @@
 import {
-    useEffect,
     useRef,
     useState,
-    forwardRef,
 } from "react";
 import {
-    Button, Paper, Typography
+    Button
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import paintPose from "../detection/pose_painter.js";
@@ -28,12 +26,6 @@ const useStyles = makeStyles((theme) => ({
         // position: "absolute",
     }
 }));
-
-async function sleep(wait) {
-    return new Promise(resolve => {
-        setTimeout(() => resolve(0), wait);
-    });
-}
 
 function GifRenderModule({ recording }) {
     const classes = useStyles();

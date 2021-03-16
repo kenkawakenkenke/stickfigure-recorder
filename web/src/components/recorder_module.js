@@ -1,11 +1,9 @@
 import {
-    useEffect,
     useRef,
     useState,
-    forwardRef,
 } from "react";
 import {
-    Button, Checkbox, Paper, Typography, FormControlLabel
+    Button, Checkbox, FormControlLabel
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "../detection/pose_canvas.js";
@@ -13,7 +11,6 @@ import useAnimationFrame from "../common/animation_frame_hook.js";
 import CameraVideo from "../detection/camera_reader.js";
 import usePosenet from "../detection/posenet_hook.js";
 import FeatureSmoother from "../detection/smoother.js";
-import RecordingsView from "../components/recordings_module.js";
 import Loader from 'react-loader-spinner';
 import { normalizeTime } from "../detection/recording_editor.js";
 
@@ -60,8 +57,6 @@ function useRecording(videoElement, isRecording, smoothingWindow) {
         poses: [],
     });
     const posenet = usePosenet();
-
-    const debugView = false;
 
     // Return a "waiting" message if we're told to record but we're not ready.
     const loadingMessage = isRecording && (!posenet || !videoElement) ?

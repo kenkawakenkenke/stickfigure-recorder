@@ -1,13 +1,5 @@
 import {
-    useEffect,
-    useRef,
-    useState,
-    forwardRef,
-    cloneElement,
-} from "react";
-import {
-    Button, Paper, Typography,
-    Slider
+    Button
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "../detection/pose_canvas.js";

@@ -1,8 +1,6 @@
 import {
     useEffect,
-    useRef,
     useState,
-    forwardRef,
 } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -59,23 +57,23 @@ function PageDescription() {
         <Typography variant="h3">Stickfigure Recorder</Typography>
 
         <div>
-            <img src="/imgs/small_dance.gif" className={classes.smallGif} />
-            <img src="/imgs/small_exercise.gif" className={classes.smallGif} />
-            <img src="/imgs/small_fighting.gif" className={classes.smallGif} />
-            <img src="/imgs/small_running.gif" className={classes.smallGif} />
+            <img src="/imgs/small_dance.gif" alt="dancing gif" className={classes.smallGif} />
+            <img src="/imgs/small_exercise.gif" alt="working out gif" className={classes.smallGif} />
+            <img src="/imgs/small_fighting.gif" alt="fighting gif" className={classes.smallGif} />
+            <img src="/imgs/small_running.gif" alt="running gif" className={classes.smallGif} />
         </div>
         Create animated stickfigure gifs just by recording youself with your webcam!
         <div>
-            <img src="/imgs/stickfigure_recording.gif" />
+            <img src="/imgs/stickfigure_recording.gif" alt="stickfigure recording gif" />
         </div>
         <div>
             <p>
-                This uses Google's <a href="https://www.tensorflow.org/lite/examples/pose_estimation/overview" target="_blank">PoseNet</a> to estimate your pose from webcam images,
+                This uses Google's <a href="https://www.tensorflow.org/lite/examples/pose_estimation/overview" target="_blank" rel="noreferrer">PoseNet</a> to estimate your pose from webcam images,
                 and converts the output to stickfigures, which you can export as animated gifs.
-                I made this when I needed lots of generic stickfigure gifs for <a href="https://open-ken.web.app/" target="_blank">another website</a>,
+                I made this when I needed lots of generic stickfigure gifs for <a href="https://open-ken.web.app/" target="_blank" rel="noreferrer">another website</a>,
                 but couldn't find any broad-enough collection of gifs.</p>
             <p>The entire website is open sourced here: </p>
-            <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank"><img src="https://gh-card.dev/repos/kenkawakenkenke/stickfigure-recorder.svg" /></a>
+            <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank" rel="noreferrer"><img src="https://gh-card.dev/repos/kenkawakenkenke/stickfigure-recorder.svg" alt="stickfigure recorder github info" /></a>
             <AdsCard />
         </div>
     </div>

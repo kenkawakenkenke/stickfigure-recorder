@@ -1,66 +1,30 @@
 import {
-    useEffect,
-    useRef,
-    useState,
-    forwardRef,
-} from "react";
-import {
-    Button, Paper, Typography, Slider
+    Typography, Slider
 } from "@material-ui/core";
-import { makeStyles } from '@material-ui/core/styles';
 import RecordingCanvas from "../detection/recording_canvas.js";
-import RecordingsView from "./recordings_module.js";
 import { setFrameStartEnd } from "../detection/recording_editor.js";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        // width: "100%",
-        // height: "250px",
-    },
-    canvasParent: {
-        position: "relative",
-        // backgroundColor: "red",
-    },
-    poses: {
+// const useStyles = makeStyles((theme) => ({
+//     root: {
+//         // width: "100%",
+//         // height: "250px",
+//     },
+//     canvasParent: {
+//         position: "relative",
+//         // backgroundColor: "red",
+//     },
+//     poses: {
 
-    },
-    canvas: {
-        // position: "absolute",
-    }
-}));
-
-async function sleep(wait) {
-    return new Promise(resolve => {
-        setTimeout(() => resolve(0), wait);
-    });
-}
-
-function PoseEditor({ pose, poseIndex, recording }) {
-    function setFirstFrame() {
-        recording.forEach((pose, idx) => {
-            if (idx < poseIndex) {
-                pose.dropped = true;
-            } else {
-                pose.dropped = false;
-            }
-        })
-    }
-    return <div>
-        <Button onClick={setFirstFrame}>First frame</Button>
-        <Button>Last frame</Button>
-    </div>
-    return "Edit!: " + pose?.t;
-}
+//     },
+//     canvas: {
+//         // position: "absolute",
+//     }
+// }));
 
 function EditModule({ recording, editCallback }) {
-    const classes = useStyles();
+    // const classes = useStyles();
 
-    const canvasRef = useRef();
-    const [showEveryFrame, setShowEveryFrame] = useState(4);
-
-    // function doSave() {
-    //     editCallback(recording);
-    // }
+    // const [showEveryFrame, setShowEveryFrame] = useState(4);
     return <div>
         <Typography variant="body1">This is what your gif will look like:</Typography>
         <RecordingCanvas recording={recording} />
