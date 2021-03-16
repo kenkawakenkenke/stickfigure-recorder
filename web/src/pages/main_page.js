@@ -36,7 +36,7 @@ function PageDescription() {
     const classes = useStyles();
     return <div className={classes.descriptionCard}>
         <Typography variant="h3">Stickfigure Recorder</Typography>
-        This app lets you create animated stickfigure gifs by recording youself with your webcam.
+        Create animated stickfigure gifs just by recording youself with your webcam!
 
 </div>
 }

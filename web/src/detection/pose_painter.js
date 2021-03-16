@@ -1,6 +1,3 @@
-
-import FeatureSmoother from "./smoother.js";
-
 const segments = [
     {
         features: ["neck",
@@ -21,6 +18,20 @@ const segments = [
     {
         features: ["hip", "leftKnee", "leftAnkle", "leftFoot"],
     }
+];
+
+const debugSegments = [
+    { features: ["nose", "leftEye", "leftEar"] },
+    { features: ["nose", "rightEye", "rightEar"] },
+    { features: ["nose", "neck"] },
+    { features: ["leftShoulder", "neck", "rightShoulder"] },
+    { features: ["leftShoulder", "leftElbow", "leftWrist", "leftHand"] },
+    { features: ["rightShoulder", "rightElbow", "rightWrist", "rightHand"] },
+    { features: ["leftShoulder", "leftHip", "hip"] },
+    { features: ["rightShoulder", "rightHip", "hip"] },
+    { features: ["neck", "hip"] },
+    { features: ["leftHip", "leftKnee", "leftAnkle", "leftFoot"] },
+    { features: ["rightHip", "rightKnee", "rightAnkle", "rightFoot"] },
 ];
 
 function addSyntheticFeatures(features) {
@@ -85,13 +96,13 @@ function extendPosition(penultimate, last, extension) {
     };
 }
 
-export function drawLines(ctx, points, width) {
+export function drawLines(ctx, points, width, style = "black") {
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
         ctx.lineTo(points[i].x, points[i].y);
     }
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = style;
     ctx.lineWidth = width;
     ctx.lineJoin = "round";
     ctx.stroke();
@@ -105,21 +116,32 @@ export function drawLine(ctx, fromPoint, toPoint, width) {
     ctx.stroke();
 }
 
-export default function paintPose(ctx, pose, backgroundOpacity = 1) {
+export default function paintPose(ctx, pose, backgroundOpacity = 1, debugView = false) {
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
     const features =
         pose.keypoints.reduce((accum, c) => { accum[c.part] = c; return accum; }, {});
     addSyntheticFeatures(features);
+
     ctx.clearRect(0, 0, width, height);
-    {
-        ctx.fillStyle = `rgba(255,255,255,${backgroundOpacity})`;
-        if (pose.dropped) {
-            ctx.fillStyle = "gray";
-        }
-        // ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = `rgba(255,255,255,${backgroundOpacity})`;
+    if (pose.dropped) {
+        ctx.fillStyle = "gray";
     }
+    ctx.fillRect(0, 0, width, height);
+
+    if (debugView) {
+        Object.values(features).forEach(feature => {
+            drawCircle(ctx, feature.position, 5, "red");
+        });
+        debugSegments.forEach(segment => {
+            const points = segment.features.map(feature => features[feature].position);
+            drawLines(ctx, points, 5, "#00ff00");
+        });
+
+        return;
+    }
+
     segments.forEach(segment => {
         const points = segment.features.map(feature => features[feature].position);
         drawLines(ctx, points, 20);

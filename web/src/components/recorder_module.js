@@ -5,7 +5,7 @@ import {
     forwardRef,
 } from "react";
 import {
-    Button, Paper, Typography
+    Button, Checkbox, Paper, Typography, FormControlLabel
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "../detection/pose_canvas.js";
@@ -28,17 +28,18 @@ const useStyles = makeStyles((theme) => ({
         padding: "8px",
         display: "inline-block",
     },
-    canvas: {
-        position: "absolute",
-        top: "0",
-        left: "0",
-        // width: "480px",
-    },
     canvasParent: {
         position: "relative",
         display: "inline-block",
     },
     videoCanvas: {
+    },
+    canvas: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+    },
+    debugCanvas: {
     },
     poses: {
         // backgroundColor: "red",
@@ -51,6 +52,8 @@ function useRecording(videoElement, isRecording, smoothingWindow) {
         poses: [],
     });
     const posenet = usePosenet();
+
+    const debugView = false;
 
     // Return a "waiting" message if we're told to record but we're not ready.
     const loadingMessage = isRecording && (!posenet || !videoElement) ?
@@ -131,6 +134,7 @@ function RecorderModule({ recordingCallback }) {
         recordingCallback(tweakedRecording);
     };
 
+    const [debugView, setDebugView] = useState(false);
     return <div className={classes.root}>
 
         <div>
@@ -139,7 +143,20 @@ function RecorderModule({ recordingCallback }) {
         </div>
 
         {isRecording &&
-            <div className={classes.canvasContainer} elevation={4}>
+            <div className={classes.canvasContainer}>
+                <div>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={debugView}
+                                onChange={(event) => setDebugView(event.target.checked)}
+                                name="chkDebugView"
+                                color="primary"
+                            />
+                        }
+                        label="Debug view"
+                    />
+                </div>
                 <div className={classes.canvasParent}>
                     {loadingMessage && <div>
                         {loadingMessage}
@@ -150,10 +167,18 @@ function RecorderModule({ recordingCallback }) {
                         className={classes.videoCanvas}
                         doLoad={isRecording}
                         readyCallback={(video) => setVideoElement(video)} />
-                    <PoseCanvas
-                        className={classes.canvas}
+                    {debugView && <PoseCanvas
+                        className={debugView ? classes.debugView : classes.canvas}
                         pose={recording && recording.poses.length && recording.poses[recording.poses.length - 1]}
-                        backgroundOpacity={0.5} />
+                        backgroundOpacity={0.5}
+                        debugView={true}
+                    />}
+                    <PoseCanvas
+                        className={debugView ? classes.debugView : classes.canvas}
+                        pose={recording && recording.poses.length && recording.poses[recording.poses.length - 1]}
+                        backgroundOpacity={0.5}
+                        debugView={false}
+                    />
                 </div>
             </div>
         }
