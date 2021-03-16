@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
     poseCanvas: {
         border: "solid 1px gray",
-        width: "80%",
+        maxWidth: "80%",
     }
 }));
 
