@@ -61,8 +61,9 @@ function GifRenderModule({ recording }) {
             canvasRef.current.width = width;
             canvasRef.current.height = height;
             const ctx = canvasRef.current.getContext('2d');
-            let prevT = recording.poses[0].t;
-            for (const pose of recording.poses) {
+            let prevT = recording.poses[recording.firstFrame].t;
+            for (let index = recording.firstFrame; index < recording.lastFrame; index++) {
+                const pose = recording.poses[index];
                 paintPose(ctx, pose);
                 // add an image element
                 const delay = pose.t - prevT;

@@ -82,6 +82,7 @@ function EditModule({ recording, editCallback }) {
 
         {/* Mini viewer */}
         <div className={classes.poses}>
+            Set the first and last frames to export (or leave as is, if you like).
             <RecordingsView
                 recording={recording}
                 outEvery={showEveryFrame}
