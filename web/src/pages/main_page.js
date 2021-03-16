@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
         // marginRight: "24px",
         padding: "8px",
     },
+    smallGif: {
+        width: "80px",
+    }
 }));
 
 function PageDescription() {
@@ -37,6 +40,12 @@ function PageDescription() {
     return <div className={classes.descriptionCard}>
         <Typography variant="h3">Stickfigure Recorder</Typography>
 
+        <div>
+            <img src="/imgs/small_dance.gif" className={classes.smallGif} />
+            <img src="/imgs/small_exercise.gif" className={classes.smallGif} />
+            <img src="/imgs/small_fighting.gif" className={classes.smallGif} />
+            <img src="/imgs/small_running.gif" className={classes.smallGif} />
+        </div>
         Create animated stickfigure gifs just by recording youself with your webcam!
         <div>
             <img src="/imgs/stickfigure_recording.gif" />
