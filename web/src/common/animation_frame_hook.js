@@ -3,22 +3,27 @@ import {
     useRef,
 } from "react";
 
-const useAnimationFrame = (callback, allowAnimate) => {
-    const animationKillFlag = useRef(false);
-    const previousTimeRef = useRef();
+const useAnimationFrame = (callback, allowAnimate, fps) => {
+    const outputEveryMs = 1000 / fps;
 
+    const animationKillFlag = useRef(false);
+    const timeStartRef = useRef();
+    const prevOutputTimeRef = useRef();
     const animate = async time => {
         if (animationKillFlag.current) {
             return;
         }
-        if (previousTimeRef.current != undefined) {
-            const deltaTime = time - previousTimeRef.current;
-            await callback(deltaTime);
+        if (!timeStartRef.current) {
+            timeStartRef.current = time;
         }
-        previousTimeRef.current = time;
+
+        const timeSinceLastOutput = time - prevOutputTimeRef.current || outputEveryMs || 0;
+        if (!fps || timeSinceLastOutput >= outputEveryMs) {
+            await callback(timeSinceLastOutput, time - timeStartRef.current, animationKillFlag);
+            prevOutputTimeRef.current = time;
+        }
         requestAnimationFrame(animate);
     }
-
 
     useEffect(() => {
         if (!allowAnimate) {

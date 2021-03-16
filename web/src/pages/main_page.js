@@ -5,22 +5,24 @@ import {
     forwardRef,
 } from "react";
 import { makeStyles } from '@material-ui/core/styles';
+import {
+    Button, Paper, Typography
+} from "@material-ui/core";
 
 import RecorderModule from "../components/recorder_module.js";
+import EditModule from "../components/edit_module.js";
 import GifRenderModule from "../components/gif_render_module.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: "100%",
-        height: "250px",
+        // margin: "8px",
+        // width: "100%",
+        // height: "250px",
     },
-    canvasParent: {
-        position: "relative",
-        // backgroundColor: "red",
+    moduleCard: {
+        margin: "8px",
+        padding: "8px",
     },
-    canvas: {
-        // position: "absolute",
-    }
 }));
 
 function MainPage() {
@@ -31,11 +33,36 @@ function MainPage() {
     const doReset = () => {
         setRecording(undefined);
     }
-    return <div>
-        {!recording && <RecorderModule recordingCallback={newRecording => setRecording(newRecording)} />}
-        {recording &&
-            <button onClick={doReset}>Reset</button>}
-        {recording && <GifRenderModule recording={recording} />}
-    </div>;
+    return <div className={classes.root}>
+        <div>
+            <Typography variant="h3">Stickfigure Recorder</Typography>
+        </div>
+
+        {/* Record */}
+        <Paper elevation={4} className={classes.moduleCard}>
+            <Typography variant="h4">1. Record!</Typography>
+            {!recording && <RecorderModule recordingCallback={newRecording => setRecording(newRecording)} />}
+            {recording &&
+                <Button onClick={doReset} variant="contained" color="secondary">
+                    Start again
+                </Button>}
+        </Paper>
+
+        {/* Edit */}
+        <Paper elevation={4} className={classes.moduleCard}>
+            <Typography variant="h4">2. Edit</Typography>
+            {recording && <EditModule
+                recording={recording}
+                editCallback={newRecording => setRecording(newRecording)}
+            />}
+        </Paper >
+
+        {/* Render */}
+        <Paper elevation={4} className={classes.moduleCard}>
+            <Typography variant="h4">3. Export</Typography>
+            {recording && <GifRenderModule recording={recording} />}
+        </Paper >
+
+    </div >;
 }
 export default MainPage;

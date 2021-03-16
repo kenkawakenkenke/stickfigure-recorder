@@ -105,16 +105,15 @@ export function drawLine(ctx, fromPoint, toPoint, width) {
     ctx.stroke();
 }
 
-export default function paintPose(ctx, pose) {
+export default function paintPose(ctx, pose, backgroundOpacity = 1) {
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
     const features =
         pose.keypoints.reduce((accum, c) => { accum[c.part] = c; return accum; }, {});
     addSyntheticFeatures(features);
-
     ctx.clearRect(0, 0, width, height);
     {
-        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.fillStyle = `rgba(255,255,255,${backgroundOpacity})`;
         // ctx.fillStyle = "white";
         ctx.fillRect(0, 0, width, height);
     }
