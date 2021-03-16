@@ -47,7 +47,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function useRecording(videoElement, isRecording, smoothingWindow) {
-    const [recording, setRecording] = useState([]);
+    const [recording, setRecording] = useState({
+        poses: [],
+    });
     const posenet = usePosenet();
 
     // Return a "waiting" message if we're told to record but we're not ready.
@@ -90,7 +92,12 @@ function useRecording(videoElement, isRecording, smoothingWindow) {
             // skip: the first frame is always weird (has a huge lag)
             return;
         }
-        setRecording(prevRecording => [...prevRecording, pose]);
+        setRecording(prevRecording => ({
+            poses: [...prevRecording.poses, {
+                ...pose,
+                frameIndex: prevRecording.poses.length,
+            }],
+        }));
     }, isRecording && posenet && videoElement,
         /* fps= */ 12);
     return [recording, loadingMessage];
@@ -112,11 +119,12 @@ function RecorderModule({ recordingCallback }) {
         setIsRecording(false);
 
         // Final tweaks before saving.
-
+        let tweakedRecording = JSON.parse(JSON.stringify(recording));
+        tweakedRecording.firstFrame = 0;
+        tweakedRecording.lastFrame = tweakedRecording.poses.length - 1;
+        // Give frame numbers to each pose
+        // tweakedRecording.poses.forEach((pose, index) => pose.frameIndex = index);
         // Ensure time always starts at 0.
-        let tweakedRecording = [
-            ...recording
-        ];
         normalizeTime(tweakedRecording);
 
         // Notify parent.
@@ -127,26 +135,28 @@ function RecorderModule({ recordingCallback }) {
 
         <div>
             {!isRecording && <Button onClick={startRecord} variant="contained" color="primary">Record</Button>}
-            {isRecording && recording.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">Stop</Button>}
+            {isRecording && recording.poses.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">Stop</Button>}
         </div>
 
-        <div className={classes.canvasContainer} elevation={4}>
-            <div className={classes.canvasParent}>
-                {loadingMessage && <div>
-                    {loadingMessage}
-                    <Loader type="Oval" color="#888888" height={48} width={48}></Loader>
-                </div>}
+        {isRecording &&
+            <div className={classes.canvasContainer} elevation={4}>
+                <div className={classes.canvasParent}>
+                    {loadingMessage && <div>
+                        {loadingMessage}
+                        <Loader type="Oval" color="#888888" height={48} width={48}></Loader>
+                    </div>}
 
-                <CameraVideo
-                    className={classes.videoCanvas}
-                    doLoad={isRecording}
-                    readyCallback={(video) => setVideoElement(video)} />
-                <PoseCanvas
-                    className={classes.canvas}
-                    pose={recording && recording[recording.length - 1]}
-                    backgroundOpacity={0.5} />
+                    <CameraVideo
+                        className={classes.videoCanvas}
+                        doLoad={isRecording}
+                        readyCallback={(video) => setVideoElement(video)} />
+                    <PoseCanvas
+                        className={classes.canvas}
+                        pose={recording && recording.poses.length && recording.poses[recording.poses.length - 1]}
+                        backgroundOpacity={0.5} />
+                </div>
             </div>
-        </div>
+        }
 
         {/* Mini viewer */}
         <div className={classes.poses}>

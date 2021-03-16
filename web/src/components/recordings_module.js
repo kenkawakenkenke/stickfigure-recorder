@@ -5,6 +5,10 @@ import {
     forwardRef,
     cloneElement,
 } from "react";
+import {
+    Button, Paper, Typography,
+    Slider
+} from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "../detection/pose_canvas.js";
 
@@ -20,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
         margin: "2px",
     },
     poseCanvas: {
-        width: "200px",
+        width: "180px",
         border: "solid 1px gray",
     },
 }));
@@ -31,17 +35,39 @@ function formatTime(tMs) {
     return `${sec}.${ms}`
 }
 
-function RecordingsView({ recording, outEvery, children }) {
+function RecordingsView({ recording, outEvery, children, updateRecordingCallback }) {
     const classes = useStyles();
 
     const sparseRecordings = [];
-    for (let i = 0; i < recording.length; i += outEvery) {
-        sparseRecordings.push(recording[i]);
+    for (let i = 0; i < recording.poses.length; i += outEvery) {
+        sparseRecordings.push(recording.poses[i]);
+    }
+    function setFirstFrame(pose) {
+        if (pose.frameIndex >= recording.lastFrame) {
+            return;
+        }
+        const newRecording = JSON.parse(JSON.stringify(recording));
+        newRecording.firstFrame = pose.frameIndex;
+        newRecording.poses.forEach((pose, i) => {
+            pose.dropped = i < newRecording.firstFrame || newRecording.lastFrame < i;
+        });
+        updateRecordingCallback(newRecording);
+    }
+    function setLastFrame(pose) {
+        if (pose.frameIndex <= recording.firstFrame) {
+            return;
+        }
+        const newRecording = JSON.parse(JSON.stringify(recording));
+        newRecording.lastFrame = pose.frameIndex;
+        newRecording.poses.forEach((pose, i) => {
+            pose.dropped = i < newRecording.firstFrame || newRecording.lastFrame < i;
+        });
+        updateRecordingCallback(newRecording);
     }
     return <div className={classes.poseParent}>
-        {sparseRecordings.map((pose, idx) =>
+        {sparseRecordings.map(pose =>
             <div
-                key={`minipose_${idx}`}
+                key={`minipose_${pose.frameIndex}`}
                 className={classes.poseDiv}
             >
                 <PoseCanvas
@@ -51,25 +77,22 @@ function RecordingsView({ recording, outEvery, children }) {
                     height={pose.videoHeight || 100}
                 />
                 <div>
-                    {formatTime(pose.t)}
+                    <b>{pose.frameIndex}</b> <small>{formatTime(pose.t)}</small>
                 </div>
-                {
-                    children && cloneElement(children,
-                        {
-                            pose,
-                            poseIndex: idx,
-                            recording,
-                            // recordingCallback: (newRecording) => setRecording
-                        })
-                }
-                {/* {children && children.length > 0 &&
-                    cloneElement(children[0],
-                        // Props to pass to children
-                        {
-                            pose: pose
-                        })} */}
+                <div>
+                    <Button
+                        disabled={pose.frameIndex >= recording.lastFrame}
+                        onClick={() => setFirstFrame(pose)}
+                        size="small">First frame</Button>
+                    <Button
+                        disabled={pose.frameIndex <= recording.firstFrame}
+                        onClick={() => setLastFrame(pose)}
+                        size="small"
+                    >Last frame</Button>
+                </div>
             </div>
-        )}
-    </div>;
+        )
+        }
+    </div >;
 }
 export default RecordingsView;

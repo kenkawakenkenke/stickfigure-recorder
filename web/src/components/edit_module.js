@@ -5,10 +5,11 @@ import {
     forwardRef,
 } from "react";
 import {
-    Button, Paper, Typography
+    Button, Paper, Typography, Slider
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import paintPose from "../detection/pose_painter.js";
+import RecordingCanvas from "../detection/recording_canvas.js";
 import RecordingsView from "./recordings_module.js";
 import GIF from "gif.js.optimized";
 
@@ -56,21 +57,42 @@ function EditModule({ recording, editCallback }) {
     const classes = useStyles();
 
     const canvasRef = useRef();
+    const [showEveryFrame, setShowEveryFrame] = useState(4);
 
     // function doSave() {
     //     editCallback(recording);
     // }
     return <div>
+        <Typography variant="body1">This is what your gif will look like:</Typography>
+        <RecordingCanvas recording={recording} />
+        <Typography id="frame-zoom-slider" gutterBottom>
+            Frame zoom level
+        </Typography>
+        <Slider
+            onChange={(e, newValue) => { setShowEveryFrame(newValue) }}
+            value={showEveryFrame}
+            getAriaValueText={v => v}
+            aria-labelledby="frame-zoom-slider"
+            valueLabelDisplay="auto"
+            step={1}
+            marks
+            min={1}
+            max={recording.poses.length}
+        />
+
         {/* Mini viewer */}
         <div className={classes.poses}>
             <RecordingsView
                 recording={recording}
-                outEvery={1}>
-                <PoseEditor />
+                outEvery={showEveryFrame}
+                updateRecordingCallback={(newRecordings) => {
+                    editCallback(newRecordings);
+                }}
+            >
             </RecordingsView>
         </div>
         {/* <Button onClick={doSave} variant="contained" color="primary">OK</Button> */}
 
-    </div>;
+    </div >;
 }
 export default EditModule;

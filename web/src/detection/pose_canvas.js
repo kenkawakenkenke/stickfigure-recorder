@@ -19,8 +19,8 @@ const PoseCanvas = ({ className, pose, backgroundOpacity = 1 }) => {
     return <canvas
         className={className}
         ref={ref}
-        width={pose?.videoWidth || 100}
-        height={pose?.videoHeight || 100}
+        width={pose?.videoWidth || 1}
+        height={pose?.videoHeight || 1}
     >
     </canvas>;
 };

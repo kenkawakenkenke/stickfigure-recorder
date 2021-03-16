@@ -114,6 +114,9 @@ export default function paintPose(ctx, pose, backgroundOpacity = 1) {
     ctx.clearRect(0, 0, width, height);
     {
         ctx.fillStyle = `rgba(255,255,255,${backgroundOpacity})`;
+        if (pose.dropped) {
+            ctx.fillStyle = "gray";
+        }
         // ctx.fillStyle = "white";
         ctx.fillRect(0, 0, width, height);
     }

@@ -9,8 +9,8 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import paintPose from "../detection/pose_painter.js";
-import RecordingsView from "./recordings_module.js";
 import GIF from "gif.js.optimized";
+import Loader from 'react-loader-spinner';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,16 +38,18 @@ async function sleep(wait) {
 function GifRenderModule({ recording }) {
     const classes = useStyles();
 
+    const [rendering, setRendering] = useState(false);
     const canvasRef = useRef();
 
     const startRenderGif = () => {
+        setRendering(true);
         const render = async () => {
-            if (!recording.length) {
+            if (!recording.poses.length) {
                 throw "nothing to export";
             }
-            console.log("recording length:", recording.length);
-            const width = recording[0].videoWidth;
-            const height = recording[0].videoHeight;
+            console.log("recording length:", recording.poses.length);
+            const width = recording.poses[0].videoWidth;
+            const height = recording.poses[0].videoHeight;
             console.log(width, height);
             var gif = new GIF({
                 workers: 2,
@@ -59,8 +61,8 @@ function GifRenderModule({ recording }) {
             canvasRef.current.width = width;
             canvasRef.current.height = height;
             const ctx = canvasRef.current.getContext('2d');
-            let prevT = recording[0].t;
-            for (const pose of recording) {
+            let prevT = recording.poses[0].t;
+            for (const pose of recording.poses) {
                 paintPose(ctx, pose);
                 // add an image element
                 const delay = pose.t - prevT;
@@ -73,11 +75,15 @@ function GifRenderModule({ recording }) {
             };
 
             gif.on('finished', function (blob) {
+                setRendering(false);
                 console.log("finished");
-                window.open(URL.createObjectURL(blob));
+                // window.open(URL.createObjectURL(blob));
+                var a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.target = '_blank';
+                a.download = 'stickfigure.gif';
+                a.click();
             });
-
-            console.log("render");
             gif.render();
         };
         render();
@@ -86,11 +92,18 @@ function GifRenderModule({ recording }) {
     return <div>
         <div
             className={classes.canvasParent}>
-            <Button onClick={startRenderGif} variant="contained" color="primary">Render</Button>
+            {!rendering &&
+                <Button onClick={startRenderGif} variant="contained" color="primary">
+                    Export GIF
+            </Button>
+            }
+            {rendering && <div>
+                Rendering GIF...
+                <Loader type="Oval" color="#888888" height={48} width={48}></Loader>
+            </div>}
             <div
                 className={classes.canvas}>
-                <canvas
-                    ref={canvasRef}
+                <canvas ref={canvasRef}
                 ></canvas>
             </div>
         </div>
