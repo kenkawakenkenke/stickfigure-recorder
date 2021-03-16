@@ -95,7 +95,7 @@ function GifRenderModule({ recording }) {
             className={classes.canvasParent}>
             {!rendering &&
                 <Button onClick={startRenderGif} variant="contained" color="primary">
-                    Export GIF
+                    Export .GIF file
             </Button>
             }
             {rendering && <div>

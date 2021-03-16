@@ -36,9 +36,21 @@ function PageDescription() {
     const classes = useStyles();
     return <div className={classes.descriptionCard}>
         <Typography variant="h3">Stickfigure Recorder</Typography>
-        Create animated stickfigure gifs just by recording youself with your webcam!
 
-</div>
+        Create animated stickfigure gifs just by recording youself with your webcam!
+        <div>
+            <img src="/imgs/stickfigure_recording.gif" />
+        </div>
+        <div>
+            <p>
+                This uses Google's <a href="https://www.tensorflow.org/lite/examples/pose_estimation/overview" target="_blank">PoseNet</a> to estimate your pose from webcam images,
+                and converts the output to stickfigures, which you can export as animated gifs.
+                I made this when I needed lots of generic stickfigure gifs for <a href="https://open-ken.web.app/" target="_blank">another website</a>,
+                but couldn't find any broad-enough collection of gifs.</p>
+            <p>The entire website is open sourced here: </p>
+            <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank"><img src="https://gh-card.dev/repos/kenkawakenkenke/stickfigure-recorder.svg" /></a>
+        </div>
+    </div>
 }
 
 function MainPage() {

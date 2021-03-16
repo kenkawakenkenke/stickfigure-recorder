@@ -65,7 +65,7 @@ function EditModule({ recording, editCallback }) {
         <Typography variant="body1">This is what your gif will look like:</Typography>
         <RecordingCanvas recording={recording} />
 
-        Set the exported range:
+        Set the start and end range to export:
         <Slider
             value={[recording.firstFrame, recording.lastFrame]}
             onChange={(e, newRange) => {
