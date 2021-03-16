@@ -3,7 +3,7 @@ import {
     useState,
 } from "react";
 import {
-    Button, Checkbox, FormControlLabel, FormControl, RadioGroup, Radio, FormLabel
+    Button, Checkbox, FormControlLabel, FormControl, RadioGroup, Radio, FormLabel, Slider
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "../detection/pose_canvas.js";
@@ -54,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
     poses: {
         // backgroundColor: "red",
         // width: "400px",
+    },
+    formControl: {
+        margin: "4px",
+        marginTop: "8px",
     }
 }));
 
@@ -110,17 +114,19 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow) {
     return [recording, loadingMessage];
 }
 
-const SMOOTHING_WINDOW = 4;
 function RecorderModule({ recordingCallback }) {
     const classes = useStyles();
     const { t, i18n } = useTranslation();
 
     const [isRecording, setIsRecording] = useState(false);
 
+    // Recording settings
     const [posenetLevel, setPosenetLevel] = useState("high");
+    const [smoothingWindow, setSmoothingWindow] = useState(4);
+
     const posenet = usePosenet(posenetLevel);
     const [videoElement, setVideoElement] = useState();
-    const [recording, loadingMessage] = useRecording(posenet, videoElement, isRecording, SMOOTHING_WINDOW);
+    const [recording, loadingMessage] = useRecording(posenet, videoElement, isRecording, smoothingWindow);
 
     const startRecord = () => {
         setIsRecording(true);
@@ -147,7 +153,8 @@ function RecorderModule({ recordingCallback }) {
         <div>
             {!isRecording && <div>
                 <div>
-                    <FormControl component="fieldset">
+                    <Button disabled={!posenet} onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>
+                    <FormControl component="fieldset" className={classes.formControl}>
                         <FormLabel component="legend">{t("PosenetAccuracy")}</FormLabel>
                         <RadioGroup row aria-label="gender" value={posenetLevel} onChange={(event) => setPosenetLevel(event.target.value)}>
                             {Object.keys(posenetConfigs).map(config =>
@@ -155,11 +162,21 @@ function RecorderModule({ recordingCallback }) {
                             )}
                         </RadioGroup>
                     </FormControl>
+                    <FormControl component="fieldset" className={classes.formControl}>
+                        <FormLabel component="legend">{t("Smoothing window")}</FormLabel>
+                        <Slider
+                            value={smoothingWindow}
+                            onChange={(e, newValue) => setSmoothingWindow(newValue)}
+                            valueLabelDisplay="auto"
+                            ticks={1}
+                            min={1}
+                            max={12}
+                        ></Slider>
+                    </FormControl>
                 </div>
                 {!posenet && <div>
                     {t("Loading PoseNet")}
                     <Loader type="Oval" color="#888888" height={48} width={48}></Loader></div>}
-                <Button disabled={!posenet} onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>
             </div>}
             {isRecording && recording.poses.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">{t("Stop")}</Button>}
         </div>
