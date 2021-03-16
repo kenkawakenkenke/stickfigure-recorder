@@ -13,6 +13,7 @@ import usePosenet from "../detection/posenet_hook.js";
 import FeatureSmoother from "../detection/smoother.js";
 import Loader from 'react-loader-spinner';
 import { normalizeTime } from "../detection/recording_editor.js";
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function useRecording(videoElement, isRecording, smoothingWindow) {
+    const { t, i18n } = useTranslation();
     const [recording, setRecording] = useState({
         poses: [],
     });
@@ -60,9 +62,9 @@ function useRecording(videoElement, isRecording, smoothingWindow) {
 
     // Return a "waiting" message if we're told to record but we're not ready.
     const loadingMessage = isRecording && (!posenet || !videoElement) ?
-        ("Waiting for: " +
-            [!posenet && "PoseNet",
-            !videoElement && "video"]
+        (t("Waiting for") +
+            [!posenet && t("PoseNet"),
+            !videoElement && t("video")]
                 .filter(x => x)
                 .join(", "))
         : undefined;
@@ -112,6 +114,7 @@ function useRecording(videoElement, isRecording, smoothingWindow) {
 const SMOOTHING_WINDOW = 4;
 function RecorderModule({ recordingCallback }) {
     const classes = useStyles();
+    const { t, i18n } = useTranslation();
 
     const [isRecording, setIsRecording] = useState(false);
 
@@ -141,8 +144,8 @@ function RecorderModule({ recordingCallback }) {
     return <div className={classes.root}>
 
         <div>
-            {!isRecording && <Button onClick={startRecord} variant="contained" color="primary">Record</Button>}
-            {isRecording && recording.poses.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">Stop</Button>}
+            {!isRecording && <Button onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>}
+            {isRecording && recording.poses.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">{t("Stop")}</Button>}
         </div>
 
         {isRecording &&
@@ -157,7 +160,7 @@ function RecorderModule({ recordingCallback }) {
                                 color="primary"
                             />
                         }
-                        label="Debug view"
+                        label={t("Debug view")}
                     />
                 </div>
                 <div className={classes.canvasParent}>

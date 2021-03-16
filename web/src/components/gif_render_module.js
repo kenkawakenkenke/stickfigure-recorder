@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import paintPose from "../detection/pose_painter.js";
 import GIF from "gif.js.optimized";
 import Loader from 'react-loader-spinner';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GifRenderModule({ recording }) {
     const classes = useStyles();
+    const { t } = useTranslation();
 
     const [rendering, setRendering] = useState(false);
     const canvasRef = useRef();
@@ -87,17 +89,16 @@ function GifRenderModule({ recording }) {
             className={classes.canvasParent}>
             {!rendering &&
                 <Button onClick={startRenderGif} variant="contained" color="primary">
-                    Export .GIF file
-            </Button>
+                    {t("Do export gif")}
+                </Button>
             }
             {rendering && <div>
-                Rendering GIF...
+                {t("Rendering GIF")}
                 <Loader type="Oval" color="#888888" height={48} width={48}></Loader>
             </div>}
             <div
                 className={classes.canvas}>
-                <canvas ref={canvasRef}
-                ></canvas>
+                <canvas ref={canvasRef}></canvas>
             </div>
         </div>
 

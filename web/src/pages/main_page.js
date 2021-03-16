@@ -4,12 +4,14 @@ import {
 } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import {
-    Button, Paper, Typography
+    Button, Link, Paper, Typography
 } from "@material-ui/core";
 
 import RecorderModule from "../components/recorder_module.js";
 import EditModule from "../components/edit_module.js";
 import GifRenderModule from "../components/gif_render_module.js";
+import { Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,34 +55,46 @@ function AdsCard(props) {
 
 function PageDescription() {
     const classes = useStyles();
-    return <div className={classes.descriptionCard}>
-        <Typography variant="h3">Stickfigure Recorder</Typography>
 
+    return <div className={classes.descriptionCard}>
+        <Typography variant="h3">
+            <Trans>Stickfigure Recorder</Trans>
+        </Typography>
         <div>
             <img src="/imgs/small_dance.gif" alt="dancing gif" className={classes.smallGif} />
             <img src="/imgs/small_exercise.gif" alt="working out gif" className={classes.smallGif} />
             <img src="/imgs/small_fighting.gif" alt="fighting gif" className={classes.smallGif} />
             <img src="/imgs/small_running.gif" alt="running gif" className={classes.smallGif} />
         </div>
-        Create animated stickfigure gifs just by recording youself with your webcam!
+        <Trans>Create animated stickfigure gifs!</Trans>
         <div>
             <img src="/imgs/stickfigure_recording.gif" alt="stickfigure recording gif" />
         </div>
         <div>
             <p>
-                This uses Google's <a href="https://www.tensorflow.org/lite/examples/pose_estimation/overview" target="_blank" rel="noreferrer">PoseNet</a> to estimate your pose from webcam images,
-                and converts the output to stickfigures, which you can export as animated gifs.
-                I made this when I needed lots of generic stickfigure gifs for <a href="https://open-ken.web.app/" target="_blank" rel="noreferrer">another website</a>,
-                but couldn't find any broad-enough collection of gifs.</p>
-            <p>The entire website is open sourced here: </p>
+                <Trans i18nKey="detailedDescription1">
+                    We use <a href="https://www.tensorflow.org/lite/examples/pose_estimation/overview" target="_blank" rel="noreferrer">PoseNet</a> to estimate your pose and generate stickfigures.
+                </Trans>
+            </p>
+            <p>
+                <Trans i18nKey="detailedDescription2">
+                    I built this to generate gifs for <a href="https://open-ken.web.app/" target="_blank" rel="noreferrer">another website</a>
+                </Trans>
+            </p>
+            <p>
+                <Trans i18nKey="openSourcedHere">
+                    The entire website is open sourced here:
+                </Trans>
+            </p>
             <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank" rel="noreferrer"><img src="https://gh-card.dev/repos/kenkawakenkenke/stickfigure-recorder.svg" alt="stickfigure recorder github info" /></a>
             <AdsCard />
         </div>
-    </div>
+    </div >
 }
 
 function MainPage() {
     const classes = useStyles();
+    const { t, i18n } = useTranslation();
 
     const [recording, setRecording] = useState();
 
@@ -94,17 +108,17 @@ function MainPage() {
 
         {/* Record */}
         <Paper elevation={4} className={classes.moduleCard}>
-            <Typography variant="h4">1. Record!</Typography>
+            <Typography variant="h4">1. <Trans i18nKey="TitleRecord">Record!</Trans></Typography>
             {!recording && <RecorderModule recordingCallback={newRecording => setRecording(newRecording)} />}
             {recording &&
                 <Button onClick={doReset} variant="contained" color="secondary">
-                    Start again
+                    {t("Start again")}
                 </Button>}
         </Paper>
 
         {/* Edit */}
         <Paper elevation={4} className={classes.moduleCard}>
-            <Typography variant="h4">2. Edit</Typography>
+            <Typography variant="h4">2. {t("Edit")}</Typography>
             {recording && <EditModule
                 recording={recording}
                 editCallback={newRecording => setRecording(newRecording)}
@@ -113,7 +127,7 @@ function MainPage() {
 
         {/* Render */}
         <Paper elevation={4} className={classes.moduleCard}>
-            <Typography variant="h4">3. Export</Typography>
+            <Typography variant="h4">3. {t("Export")}</Typography>
             {recording && <GifRenderModule recording={recording} />}
         </Paper >
 

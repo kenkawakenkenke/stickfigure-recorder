@@ -1,5 +1,4 @@
 import MainPage from "./pages/main_page.js";
-import "./firebase/setup_firebase.js";
 
 function App() {
   return (

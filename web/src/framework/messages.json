@@ -1,0 +1,46 @@
+{
+    "en": {
+        "translation": {
+            "Stickfigure Recorder": "Stick Figure Recorder",
+            "Create animated stickfigure gifs!": "Create animated stick figure gifs just by recording youself with your webcam!",
+            "detailedDescription1": "This uses Google's <1>PoseNet</1> to estimate your pose from webcam images and render stick figures, which can then be exported as animated gifs. Amazingly PoseNet lets this tool run entirely in your browser (probably not so well on mobile though.)",
+            "detailedDescription2": "I made this when I needed lots of generic stickfigure gifs for <1>another website</1>, but couldn't find any large-enough collection of gifs.",
+            "openSourcedHere": "The entire website is open sourced here:",
+            "TitleRecord":"Record!",
+            "Record!":"Record",
+            "Stop":"Stop",
+            "Start again":"Start again",
+            "Debug view":"Debug view",
+            "Waiting for":"Waiting for: ",
+            "PoseNet":"PoseNet",
+            "video":"video",
+            "Edit":"Edit",
+            "Export":"Export",
+            "Set the start and end range to export":"Set the start and end range to export:",
+            "Do export gif": "Export .GIF file",
+            "Rendering GIF": "Rendering GIF..."
+        }
+    },
+    "ja": {
+        "translation": {
+            "Stickfigure Recorder": "棒人間メイカー",
+            "Create animated stickfigure gifs!": "ウェブカメラで録画するだけで棒人間gifを作ろう！",
+            "detailedDescription1": "Googleの<1>PoseNet</1>を使ってウェブカメラの画像から姿勢を推定し、棒人間gifに変換するツールです。全部ブラウザで動きます。",
+            "detailedDescription2":"以前、<2>別のサイト</2>を作るときに大量の棒人間gifが欲しくなり、世の中にあるフリー素材では不充分だったためこういうツールを作りました。",
+            "openSourcedHere": "このウェブサイトは全てオープンソースになっています：",
+            "TitleRecord":"録画する",
+            "Record!":"録画開始",
+            "Stop":"停止",
+            "Start again":"撮りなおす",
+            "Debug view":"デバッグモード",
+            "Waiting for":"ロード中: ",
+            "PoseNet":"PoseNet",
+            "video":"カメラ",
+            "Edit":"編集",
+            "Export":"出力",
+            "Set the start and end range to export":"出力する開始と終了位置を選んでください：",
+            "Do export gif": "GIFファイルを出力",
+            "Rendering GIF": "GIFファイルを準備中..."
+        }
+    }
+}

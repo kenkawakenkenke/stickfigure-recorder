@@ -3,6 +3,7 @@ import {
 } from "@material-ui/core";
 import RecordingCanvas from "../detection/recording_canvas.js";
 import { setFrameStartEnd } from "../detection/recording_editor.js";
+import { useTranslation } from 'react-i18next';
 
 // const useStyles = makeStyles((theme) => ({
 //     root: {
@@ -23,13 +24,13 @@ import { setFrameStartEnd } from "../detection/recording_editor.js";
 
 function EditModule({ recording, editCallback }) {
     // const classes = useStyles();
+    const { t } = useTranslation();
 
     // const [showEveryFrame, setShowEveryFrame] = useState(4);
     return <div>
-        <Typography variant="body1">This is what your gif will look like:</Typography>
         <RecordingCanvas recording={recording} />
 
-        Set the start and end range to export:
+        <Typography variant="body1">{t("Set the start and end range to export")}</Typography>
         <Slider
             value={[recording.firstFrame, recording.lastFrame]}
             onChange={(e, newRange) => {
