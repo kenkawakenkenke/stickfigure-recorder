@@ -8,10 +8,9 @@ import {
     Button, Paper, Typography, Slider
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import paintPose from "../detection/pose_painter.js";
 import RecordingCanvas from "../detection/recording_canvas.js";
 import RecordingsView from "./recordings_module.js";
-import GIF from "gif.js.optimized";
+import { setFrameStartEnd } from "../detection/recording_editor.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -65,7 +64,21 @@ function EditModule({ recording, editCallback }) {
     return <div>
         <Typography variant="body1">This is what your gif will look like:</Typography>
         <RecordingCanvas recording={recording} />
-        <Typography id="frame-zoom-slider" gutterBottom>
+
+        Set the exported range:
+        <Slider
+            value={[recording.firstFrame, recording.lastFrame]}
+            onChange={(e, newRange) => {
+                const newRecording = JSON.parse(JSON.stringify(recording));
+                setFrameStartEnd(newRecording, newRange[0], newRange[1]);
+                editCallback(newRecording);
+            }}
+            valueLabelDisplay="auto"
+            min={0}
+            max={recording.poses.length - 1}
+        />
+
+        {/* <Typography id="frame-zoom-slider" gutterBottom>
             Frame zoom level
         </Typography>
         <Slider
@@ -78,10 +91,10 @@ function EditModule({ recording, editCallback }) {
             marks
             min={1}
             max={recording.poses.length}
-        />
+        /> */}
 
         {/* Mini viewer */}
-        <div className={classes.poses}>
+        {/* <div className={classes.poses}>
             Set the first and last frames to export (or leave as is, if you like).
             <RecordingsView
                 recording={recording}
@@ -91,8 +104,7 @@ function EditModule({ recording, editCallback }) {
                 }}
             >
             </RecordingsView>
-        </div>
-        {/* <Button onClick={doSave} variant="contained" color="primary">OK</Button> */}
+        </div> */}
 
     </div >;
 }

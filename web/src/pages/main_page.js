@@ -15,19 +15,29 @@ import GifRenderModule from "../components/gif_render_module.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        margin: "24px",
         // margin: "8px",
         // width: "100%",
         // height: "250px",
     },
+    descriptionCard: {
+        // margin: "24px",
+    },
     moduleCard: {
-        margin: "8px",
+        marginTop: "24px",
+        // margin: "24px",
+        // marginLeft: "24px",
+        // marginRight: "24px",
         padding: "8px",
     },
 }));
 
 function PageDescription() {
-    return <div>
-        Hello
+    const classes = useStyles();
+    return <div className={classes.descriptionCard}>
+        <Typography variant="h3">Stickfigure Recorder</Typography>
+        This app lets you create animated stickfigure gifs by recording youself with your webcam.
+
 </div>
 }
 
@@ -41,7 +51,6 @@ function MainPage() {
     }
     return <div className={classes.root}>
         <div>
-            <Typography variant="h3">Stickfigure Recorder</Typography>
             <PageDescription />
         </div>
 

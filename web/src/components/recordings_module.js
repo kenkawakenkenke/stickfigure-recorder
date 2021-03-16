@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "../detection/pose_canvas.js";
+import { setFrameStartEnd } from "../detection/recording_editor.js";
 
 const useStyles = makeStyles((theme) => ({
     poseParent: {
@@ -43,25 +44,13 @@ function RecordingsView({ recording, outEvery, children, updateRecordingCallback
         sparseRecordings.push(recording.poses[i]);
     }
     function setFirstFrame(pose) {
-        if (pose.frameIndex >= recording.lastFrame) {
-            return;
-        }
         const newRecording = JSON.parse(JSON.stringify(recording));
-        newRecording.firstFrame = pose.frameIndex;
-        newRecording.poses.forEach((pose, i) => {
-            pose.dropped = i < newRecording.firstFrame || newRecording.lastFrame < i;
-        });
+        setFrameStartEnd(newRecording, pose.frameIndex, newRecording.lastFrame);
         updateRecordingCallback(newRecording);
     }
     function setLastFrame(pose) {
-        if (pose.frameIndex <= recording.firstFrame) {
-            return;
-        }
         const newRecording = JSON.parse(JSON.stringify(recording));
-        newRecording.lastFrame = pose.frameIndex;
-        newRecording.poses.forEach((pose, i) => {
-            pose.dropped = i < newRecording.firstFrame || newRecording.lastFrame < i;
-        });
+        setFrameStartEnd(newRecording, newRecording.lastFrame, pose.frameIndex);
         updateRecordingCallback(newRecording);
     }
     return <div className={classes.poseParent}>

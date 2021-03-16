@@ -159,11 +159,11 @@ function RecorderModule({ recordingCallback }) {
         }
 
         {/* Mini viewer */}
-        <div className={classes.poses}>
+        {/* <div className={classes.poses}>
             <RecordingsView
                 recording={recording}
                 outEvery={12} />
-        </div>
+        </div> */}
     </div >;
 }
 export default RecorderModule;
