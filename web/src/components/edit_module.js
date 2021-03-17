@@ -1,6 +1,7 @@
 import {
     Typography, Slider
 } from "@material-ui/core";
+import { withStyles } from '@material-ui/core/styles';
 import RecordingCanvas from "../detection/recording_canvas.js";
 import { setFrameStartEnd } from "../detection/recording_editor.js";
 import { useTranslation } from 'react-i18next';
@@ -22,16 +23,65 @@ import { useTranslation } from 'react-i18next';
 //     }
 // }));
 
+
+const RangeSlider = withStyles({
+    root: {
+        color: '#220000',
+        height: 3,
+        padding: '13px 0',
+    },
+    thumb: {
+        height: 27,
+        width: 27,
+        backgroundColor: '#fdfdfd',
+        marginTop: -12,
+        marginLeft: -13,
+        boxShadow: '#ccc 0 2px 3px 1px',
+        '&:focus, &:hover, &$active': {
+            boxShadow: '#999 0 2px 3px 1px',
+        },
+        '& .arrowRight': {
+            width: "0",
+            height: "0",
+            marginLeft: "2px",
+            borderTop: "10px solid transparent",
+            borderBottom: "10px solid transparent",
+            borderLeft: "10px solid #4350AF",
+        },
+        '& .arrowLeft': {
+            width: "0",
+            height: "0",
+            marginRight: "2px",
+            borderTop: "10px solid transparent",
+            borderBottom: "10px solid transparent",
+            borderRight: "10px solid #4350AF",
+        }
+    },
+})(Slider);
+function RangeSliderThumbComponent(props) {
+    const isOpeningRange = props["data-index"] === 0;
+    if (isOpeningRange) {
+        return (
+            <span {...props}>
+                <span className="arrowRight" />
+            </span>
+        );
+    }
+    return (
+        <span {...props}>
+            <span className="arrowLeft" />
+        </span>
+    );
+}
+
 function EditModule({ recording, editCallback }) {
-    // const classes = useStyles();
     const { t } = useTranslation();
 
-    // const [showEveryFrame, setShowEveryFrame] = useState(4);
     return <div>
         <RecordingCanvas recording={recording} />
 
         <Typography variant="body1">{t("Set the start and end range to export")}</Typography>
-        <Slider
+        <RangeSlider
             value={[recording.firstFrame, recording.lastFrame]}
             onChange={(e, newRange) => {
                 const newRecording = JSON.parse(JSON.stringify(recording));
@@ -41,36 +91,8 @@ function EditModule({ recording, editCallback }) {
             valueLabelDisplay="auto"
             min={0}
             max={recording.frames.length - 1}
+            ThumbComponent={RangeSliderThumbComponent}
         />
-
-        {/* <Typography id="frame-zoom-slider" gutterBottom>
-            Frame zoom level
-        </Typography>
-        <Slider
-            onChange={(e, newValue) => { setShowEveryFrame(newValue) }}
-            value={showEveryFrame}
-            getAriaValueText={v => v}
-            aria-labelledby="frame-zoom-slider"
-            valueLabelDisplay="auto"
-            step={1}
-            marks
-            min={1}
-            max={recording.poses.length}
-        /> */}
-
-        {/* Mini viewer */}
-        {/* <div className={classes.poses}>
-            Set the first and last frames to export (or leave as is, if you like).
-            <RecordingsView
-                recording={recording}
-                outEvery={showEveryFrame}
-                updateRecordingCallback={(newRecordings) => {
-                    editCallback(newRecordings);
-                }}
-            >
-            </RecordingsView>
-        </div> */}
-
     </div >;
 }
 export default EditModule;
