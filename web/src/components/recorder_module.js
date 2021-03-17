@@ -57,6 +57,17 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
         marginTop: "8px",
         borderTop: "solid #dddddd 1px",
+    },
+    recordButtonContainer: {
+        display: "flex",
+        alignItems: "center",
+    },
+    loader: {
+        display: "flex",
+        alignItems: "center",
+    },
+    loaderSpinner: {
+        margin: "4px",
     }
 }));
 
@@ -234,7 +245,14 @@ function RecorderModule({ recordingCallback }) {
         <div>
             {!isRecording && <div>
                 <div>
-                    <Button disabled={!posenet} onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>
+                    <div className={classes.recordButtonContainer}>
+                        <Button disabled={!posenet} onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>
+                        {!posenet && <div className={classes.loader}>
+                            <Loader className={classes.loaderSpinner} type="Oval" color="#888888" height={48} width={48}></Loader>
+                            {t("Loading PoseNet")}
+                        </div>}
+                    </div>
+
                     <div className={classes.formControl}>
                         <FormControl component="fieldset">
                             <FormLabel component="legend">{t("PosenetAccuracy")}</FormLabel>
@@ -265,9 +283,6 @@ function RecorderModule({ recordingCallback }) {
                         </FormControl>
                     </div>
                 </div>
-                {!posenet && <div>
-                    {t("Loading PoseNet")}
-                    <Loader type="Oval" color="#888888" height={48} width={48}></Loader></div>}
             </div>}
             {isRecording && recording.frames.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">{t("Stop")}</Button>}
         </div>
@@ -289,9 +304,9 @@ function RecorderModule({ recordingCallback }) {
                     />
                 </div>
                 <div className={classes.canvasParent}>
-                    {loadingMessage && <div>
+                    {loadingMessage && <div className={classes.loader}>
+                        <Loader className={classes.loaderSpinner} type="Oval" color="#888888" height={48} width={48}></Loader>
                         {loadingMessage}
-                        <Loader type="Oval" color="#888888" height={48} width={48}></Loader>
                     </div>}
 
                     <CameraVideo
