@@ -48,17 +48,15 @@ function GifRenderModule({ recording }) {
             canvasRef.current.width = width;
             canvasRef.current.height = height;
             const ctx = canvasRef.current.getContext('2d');
-            let prevT = recording.frames[recording.firstFrame].t;
+            const delay = 1000 / recording.framerate;
             for (let index = recording.firstFrame; index < recording.lastFrame; index++) {
                 const frame = recording.frames[index];
                 paintFrame(ctx, frame);
                 // add an image element
-                const delay = frame.t - prevT;
                 gif.addFrame(ctx, {
                     delay,
                     copy: true
                 });
-                prevT = frame.t;
             };
 
             gif.on('finished', function (blob) {

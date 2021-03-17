@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme) => ({
     poseCanvas: {
         border: "solid 1px gray",
         maxWidth: "80%",
+    },
+    framerateSlider: {
+        maxWidth: "50%"
     }
 }));
 
@@ -26,6 +29,7 @@ function EditModule({ recording, editCallback }) {
     // This is useful because it lets the user preview the frame as they update the
     // start/end frames. 
     const [fixFrame, setFixFrame] = useState();
+
     return <div className={classes.root}>
         <RecordingCanvas
             recording={recording}
@@ -52,6 +56,24 @@ function EditModule({ recording, editCallback }) {
             stopFocusCallback={() => {
                 setFixFrame(undefined);
             }}
+        />
+
+        <Typography id="slider-framerate" gutterBottom>
+            {t("Playback speed")}: {recording.framerate}
+        </Typography>
+        <Slider
+            className={classes.framerateSlider}
+            value={recording.framerate}
+            onChange={(e, newValue) => {
+                const newRecording = JSON.parse(JSON.stringify(recording));
+                newRecording.framerate = newValue;
+                editCallback(newRecording);
+            }}
+            aria-labelledby="slider-framerate"
+            min={1}
+            max={60}
+            step={1}
+            valueLabelDisplay="auto"
         />
     </div >;
 }

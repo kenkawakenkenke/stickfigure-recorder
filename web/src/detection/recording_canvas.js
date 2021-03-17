@@ -44,7 +44,7 @@ function RecordingCanvas({ recording, fixFrame }) {
         }
     },
         /* allowAnimate= */ recording && recording.frames.length > 0 && !(fixFrame >= 0),
-        /* fps= */ 12,
+        /* fps= */ recording.framerate || 12,
         /* dependencies=*/[recording]);
     return <div>
         <PoseCanvas

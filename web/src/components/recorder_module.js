@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 import { distBetween } from "../detection/point_util.js";
 
+const DEFAULT_FRAMERATE = 12;
 const useStyles = makeStyles((theme) => ({
     root: {
     },
@@ -188,7 +189,7 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
         }));
     },
         /* allowAnimate= */ isRecording && posenet && videoElement,
-        /* fps= */ 12);
+        /* fps= */ DEFAULT_FRAMERATE);
     // Note: we don't include smoothingWindow and allowMultiplePoses in dependencies because
     // these never change while the animation is running.
     return [recording, loadingMessage];
@@ -221,6 +222,7 @@ function RecorderModule({ recordingCallback }) {
         tweakedRecording.lastFrame = tweakedRecording.frames.length - 1;
         // Ensure time always starts at 0.
         normalizeTime(tweakedRecording);
+        tweakedRecording.framerate = DEFAULT_FRAMERATE;
 
         // Notify parent.
         recordingCallback(tweakedRecording);
@@ -253,7 +255,7 @@ function RecorderModule({ recordingCallback }) {
                             valueLabelDisplay="auto"
                             ticks={1}
                             min={1}
-                            max={12}
+                            max={DEFAULT_FRAMERATE * 2}
                         ></Slider>
                     </FormControl>
                 </div>
