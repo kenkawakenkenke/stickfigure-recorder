@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     Typography, Slider
 } from "@material-ui/core";
@@ -77,16 +78,37 @@ function RangeSliderThumbComponent(props) {
 function EditModule({ recording, editCallback }) {
     const { t } = useTranslation();
 
+    // If true, forces the RecordingCanvas to show either the first or last frame.
+    // This is useful because it lets the user preview the frame as they update the
+    // start/end frames. 
+    const [fixFrameToStart, setFixFrameToStart] = useState(false);
+    const [fixFrameToEnd, setFixFrameToEnd] = useState(false);
     return <div>
-        <RecordingCanvas recording={recording} />
+        <RecordingCanvas
+            recording={recording}
+            fixFrameToStart={fixFrameToStart}
+            fixFrameToEnd={fixFrameToEnd}
+        />
 
         <Typography variant="body1">{t("Set the start and end range to export")}</Typography>
         <RangeSlider
             value={[recording.firstFrame, recording.lastFrame]}
             onChange={(e, newRange) => {
+                // User is moused-down on either the start or end thumbs.
+                const isStart = e.target.dataset["index"] === "0";
+                if (isStart) {
+                    setFixFrameToStart(true);
+                } else {
+                    setFixFrameToEnd(true);
+                }
                 const newRecording = JSON.parse(JSON.stringify(recording));
                 setFrameStartEnd(newRecording, newRange[0], newRange[1]);
                 editCallback(newRecording);
+            }}
+            onChangeCommitted={(e, newRange) => {
+                // The user has moused-up.
+                setFixFrameToStart(false);
+                setFixFrameToEnd(false);
             }}
             valueLabelDisplay="auto"
             min={0}

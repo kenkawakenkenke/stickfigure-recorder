@@ -1,4 +1,5 @@
 import {
+    useEffect,
     useRef,
     useState,
 } from "react";
@@ -22,10 +23,16 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function RecordingCanvas({ recording }) {
+function RecordingCanvas({ recording, fixFrameToStart, fixFrameToEnd }) {
     const classes = useStyles();
-    const [frame, setFrame] = useState(0);
     const [currentFrameIndex, setCurrentFrameIndex] = useState(recording.firstFrame);
+    useEffect(() => {
+        if (fixFrameToStart) {
+            setCurrentFrameIndex(recording.firstFrame);
+        } else if (fixFrameToEnd) {
+            setCurrentFrameIndex(recording.lastFrame);
+        }
+    }, [fixFrameToStart, fixFrameToEnd, recording]);
 
     const frameIndexRef = useRef(0);
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
@@ -37,17 +44,16 @@ function RecordingCanvas({ recording }) {
             frameIndex = recording.firstFrame;
         }
         frameIndexRef.current = frameIndex;
-        setCurrentFrameIndex(frameIndex);
         if (!killRef.current) {
-            setFrame(recording.frames[frameIndex]);
+            setCurrentFrameIndex(frameIndex);
         }
-    }, recording && recording.frames.length > 0,
+    }, recording && recording.frames.length > 0 && !fixFrameToStart && !fixFrameToEnd,
         /* fps= */ 12,
         /* dependencies=*/[recording]);
     return <div>
         <PoseCanvas
             className={classes.poseCanvas}
-            frame={frame} />
+            frame={recording.frames[currentFrameIndex]} />
         <Slider
             value={currentFrameIndex}
             valueLabelDisplay="auto"
