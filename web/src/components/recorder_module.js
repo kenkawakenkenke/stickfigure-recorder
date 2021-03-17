@@ -57,6 +57,34 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+async function singlePoseDetection(posenet, videoElement, smoothers, smoothingWindow) {
+    const pose = await posenet.estimateSinglePose(videoElement);
+
+    // Smoothing
+    pose.keypoints.forEach(feature => {
+        let smoother = smoothers[feature.part];
+        if (!smoother) {
+            smoothers[feature.part] = smoother = new FeatureSmoother(smoothingWindow);
+        }
+        smoother.add(feature.position);
+        const smoothed = smoother.smoothed();
+        feature.position = smoothed;
+    });
+    return [pose];
+}
+
+async function multiPoseDetection(posenet, videoElement, smoothers) {
+    const poses = await posenet.estimateMultiplePoses(videoElement, {
+        flipHorizontal: false,
+        maxDetections: 5,
+        scoreThreshold: 0.5,
+        nmsRadius: 20
+    });
+    // TODO(ken): implement smoothing for multiple poses.
+
+    return poses;
+}
+
 function useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses) {
     const { t, i18n } = useTranslation();
     const [recording, setRecording] = useState({
@@ -79,30 +107,9 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
         videoElement.height = videoElement.videoHeight;
         const frame = {};
         if (allowMultiplePoses) {
-            const poses = await net.estimateMultiplePoses(videoElement, {
-                flipHorizontal: false,
-                maxDetections: 5,
-                scoreThreshold: 0.5,
-                nmsRadius: 20
-            });
-
-            // TODO(ken): implement smoothing for multiple poses.
-
-            frame.poses = poses;
+            frame.poses = await multiPoseDetection(net, videoElement, smoothersRef.current);
         } else {
-            const pose = await net.estimateSinglePose(videoElement);
-
-            // Smoothing
-            pose.keypoints.forEach(feature => {
-                let smoother = smoothersRef.current[feature.part];
-                if (!smoother) {
-                    smoothersRef.current[feature.part] = smoother = new FeatureSmoother(smoothingWindow);
-                }
-                smoother.add(feature.position);
-                const smoothed = smoother.smoothed();
-                feature.position = smoothed;
-            });
-            frame.poses = [pose];
+            frame.poses = await singlePoseDetection(net, videoElement, smoothersRef.current, smoothingWindow);
         }
         frame.videoWidth = videoElement.videoWidth;
         frame.videoHeight = videoElement.videoHeight;
