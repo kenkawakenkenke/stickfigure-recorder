@@ -17,8 +17,6 @@ import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        // backgroundColor: "#bbbbff",
-        // width: "100%",
     },
     canvasContainer: {
         marginTop: "8px",
@@ -52,8 +50,6 @@ const useStyles = makeStyles((theme) => ({
         left: "200px",
     },
     poses: {
-        // backgroundColor: "red",
-        // width: "400px",
     },
     formControl: {
         margin: "4px",
@@ -124,7 +120,8 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
                 frameIndex: prevRecording.frames.length,
             }],
         }));
-    }, isRecording && posenet && videoElement,
+    },
+        /* allowAnimate= */ isRecording && posenet && videoElement,
         /* fps= */ 12);
     // Note: we don't include smoothingWindow and allowMultiplePoses in dependencies because
     // these never change while the animation is running.
@@ -244,13 +241,6 @@ function RecorderModule({ recordingCallback }) {
                 </div>
             </div>
         }
-
-        {/* Mini viewer */}
-        {/* <div className={classes.poses}>
-            <RecordingsView
-                recording={recording}
-                outEvery={12} />
-        </div> */}
     </div >;
 }
 export default RecorderModule;

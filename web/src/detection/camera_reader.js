@@ -13,7 +13,6 @@ async function setupCamera(video) {
 
         return new Promise(resolve => {
             video.onloadedmetadata = () => {
-                // console.log(video.videoWidth, video.videoHeight);
                 resolve(video);
             };
         });
@@ -24,7 +23,7 @@ async function setupCamera(video) {
     }
 }
 
-function CameraVideo({ width, height, doLoad, readyCallback, className }) {
+function CameraVideo({ doLoad, readyCallback, className }) {
     const videoRef = useRef();
 
     useEffect(() => {
@@ -49,8 +48,6 @@ function CameraVideo({ width, height, doLoad, readyCallback, className }) {
         }
     }, [doLoad]);
 
-    // width = { width }
-    // height = { height }
     return <video
         className={className}
         ref={videoRef}
