@@ -29,7 +29,7 @@ const useAnimationFrame = (callback, allowAnimate, fps, dependencies = []) => {
     }
 
     useEffect(() => {
-        console.log("useAnimationFrame");
+        // console.log("useAnimationFrame");
         if (!allowAnimate) {
             return;
         }

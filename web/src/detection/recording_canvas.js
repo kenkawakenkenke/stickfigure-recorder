@@ -20,16 +20,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function RecordingCanvas({ recording, fixFrameToStart, fixFrameToEnd }) {
+function RecordingCanvas({ recording, fixFrame }) {
     const classes = useStyles();
     const [currentFrameIndex, setCurrentFrameIndex] = useState(recording.firstFrame);
     useEffect(() => {
-        if (fixFrameToStart) {
-            setCurrentFrameIndex(recording.firstFrame);
-        } else if (fixFrameToEnd) {
-            setCurrentFrameIndex(recording.lastFrame);
+        if (fixFrame >= 0) {
+            setCurrentFrameIndex(fixFrame);
         }
-    }, [fixFrameToStart, fixFrameToEnd, recording]);
+    }, [fixFrame]);
 
     const frameIndexRef = useRef(0);
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
@@ -45,7 +43,7 @@ function RecordingCanvas({ recording, fixFrameToStart, fixFrameToEnd }) {
             setCurrentFrameIndex(frameIndex);
         }
     },
-        /* allowAnimate= */ recording && recording.frames.length > 0 && !fixFrameToStart && !fixFrameToEnd,
+        /* allowAnimate= */ recording && recording.frames.length > 0 && !(fixFrame >= 0),
         /* fps= */ 12,
         /* dependencies=*/[recording]);
     return <div>
