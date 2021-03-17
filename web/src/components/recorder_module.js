@@ -55,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
     poses: {
     },
     formControl: {
-        margin: "4px",
         marginTop: "8px",
+        borderTop: "solid #dddddd 1px",
     }
 }));
 
@@ -235,29 +235,35 @@ function RecorderModule({ recordingCallback }) {
             {!isRecording && <div>
                 <div>
                     <Button disabled={!posenet} onClick={startRecord} variant="contained" color="primary">{t("Record!")}</Button>
-                    <FormControl component="fieldset" className={classes.formControl}>
-                        <FormLabel component="legend">{t("PosenetAccuracy")}</FormLabel>
-                        <RadioGroup row aria-label="gender" value={posenetLevel} onChange={(event) => setPosenetLevel(event.target.value)}>
-                            {Object.keys(posenetConfigs).map(config =>
-                                <FormControlLabel key={`config_${config}`} value={config} control={<Radio />} label={t(`PosenetAccuracy_${config}`)} />
-                            )}
-                        </RadioGroup>
-                    </FormControl>
-                    <FormControlLabel control={<Checkbox
-                        checked={allowMultiplePoses}
-                        onChange={(event) => setAllowMultiplePoses(event.target.checked)}
-                        name="checkedF" />} label={t("Allow multiple people estimation")} />
-                    <FormControl component="fieldset" className={classes.formControl}>
-                        <FormLabel component="legend">{t("Smoothing window")}</FormLabel>
-                        <Slider
-                            value={smoothingWindow}
-                            onChange={(e, newValue) => setSmoothingWindow(newValue)}
-                            valueLabelDisplay="auto"
-                            ticks={1}
-                            min={1}
-                            max={DEFAULT_FRAMERATE * 2}
-                        ></Slider>
-                    </FormControl>
+                    <div className={classes.formControl}>
+                        <FormControl component="fieldset">
+                            <FormLabel component="legend">{t("PosenetAccuracy")}</FormLabel>
+                            <RadioGroup row aria-label="gender" value={posenetLevel} onChange={(event) => setPosenetLevel(event.target.value)}>
+                                {Object.keys(posenetConfigs).map(config =>
+                                    <FormControlLabel key={`config_${config}`} value={config} control={<Radio />} label={t(`PosenetAccuracy_${config}`)} />
+                                )}
+                            </RadioGroup>
+                        </FormControl>
+                    </div>
+                    <div className={classes.formControl}>
+                        <FormControlLabel control={<Checkbox
+                            checked={allowMultiplePoses}
+                            onChange={(event) => setAllowMultiplePoses(event.target.checked)}
+                            name="checkedF" />} label={t("Allow multiple people estimation")} />
+                    </div>
+                    <div className={classes.formControl}>
+                        <FormControl className={classes.formControl} component="fieldset">
+                            <FormLabel component="legend">{t("Smoothing window")}</FormLabel>
+                            <Slider
+                                value={smoothingWindow}
+                                onChange={(e, newValue) => setSmoothingWindow(newValue)}
+                                valueLabelDisplay="auto"
+                                ticks={1}
+                                min={1}
+                                max={DEFAULT_FRAMERATE * 2}
+                            ></Slider>
+                        </FormControl>
+                    </div>
                 </div>
                 {!posenet && <div>
                     {t("Loading PoseNet")}
