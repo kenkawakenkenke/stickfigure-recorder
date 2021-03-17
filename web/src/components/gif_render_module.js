@@ -6,7 +6,7 @@ import {
     Button
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import paintPose from "../detection/pose_painter.js";
+import paintFrame from "../detection/pose_painter.js";
 import GIF from "gif.js.optimized";
 import Loader from 'react-loader-spinner';
 import { useTranslation } from 'react-i18next';
@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
     canvasParent: {
         position: "relative",
         // backgroundColor: "red",
-    },
-    poses: {
-
     },
     canvas: {
         // position: "absolute",
@@ -38,12 +35,12 @@ function GifRenderModule({ recording }) {
     const startRenderGif = () => {
         setRendering(true);
         const render = async () => {
-            if (!recording.poses.length) {
+            if (!recording.frames.length) {
                 throw "nothing to export";
             }
-            console.log("recording length:", recording.poses.length);
-            const width = recording.poses[0].videoWidth;
-            const height = recording.poses[0].videoHeight;
+            console.log("recording length:", recording.frames.length);
+            const width = recording.frames[0].videoWidth;
+            const height = recording.frames[0].videoHeight;
             console.log(width, height);
             var gif = new GIF({
                 workers: 2,
@@ -55,18 +52,17 @@ function GifRenderModule({ recording }) {
             canvasRef.current.width = width;
             canvasRef.current.height = height;
             const ctx = canvasRef.current.getContext('2d');
-            let prevT = recording.poses[recording.firstFrame].t;
+            let prevT = recording.frames[recording.firstFrame].t;
             for (let index = recording.firstFrame; index < recording.lastFrame; index++) {
-                const pose = recording.poses[index];
-                paintPose(ctx, pose);
+                const frame = recording.frames[index];
+                paintFrame(ctx, frame);
                 // add an image element
-                const delay = pose.t - prevT;
-                // console.log(pose.t, delay);
+                const delay = frame.t - prevT;
                 gif.addFrame(ctx, {
                     delay,
                     copy: true
                 });
-                prevT = pose.t;
+                prevT = frame.t;
             };
 
             gif.on('finished', function (blob) {

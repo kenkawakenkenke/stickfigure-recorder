@@ -61,10 +61,10 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function useRecording(posenet, videoElement, isRecording, smoothingWindow) {
+function useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses) {
     const { t, i18n } = useTranslation();
     const [recording, setRecording] = useState({
-        poses: [],
+        frames: [],
     });
 
     // Return a "waiting" message if we're told to record but we're not ready.
@@ -81,21 +81,36 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow) {
         const net = posenet;
         videoElement.width = videoElement.videoWidth;
         videoElement.height = videoElement.videoHeight;
-        const pose = await net.estimateSinglePose(videoElement);
-        pose.videoWidth = videoElement.videoWidth;
-        pose.videoHeight = videoElement.videoHeight;
-        pose.t = timeSinceStartMs;
+        const frame = {};
+        if (allowMultiplePoses) {
+            const poses = await net.estimateMultiplePoses(videoElement, {
+                flipHorizontal: false,
+                maxDetections: 5,
+                scoreThreshold: 0.5,
+                nmsRadius: 20
+            });
 
-        // Smoothing
-        pose.keypoints.forEach(feature => {
-            let smoother = smoothersRef.current[feature.part];
-            if (!smoother) {
-                smoothersRef.current[feature.part] = smoother = new FeatureSmoother(smoothingWindow);
-            }
-            smoother.add(feature.position);
-            const smoothed = smoother.smoothed();
-            feature.position = smoothed;
-        });
+            // TODO(ken): implement smoothing for multiple poses.
+
+            frame.poses = poses;
+        } else {
+            const pose = await net.estimateSinglePose(videoElement);
+
+            // Smoothing
+            pose.keypoints.forEach(feature => {
+                let smoother = smoothersRef.current[feature.part];
+                if (!smoother) {
+                    smoothersRef.current[feature.part] = smoother = new FeatureSmoother(smoothingWindow);
+                }
+                smoother.add(feature.position);
+                const smoothed = smoother.smoothed();
+                feature.position = smoothed;
+            });
+            frame.poses = [pose];
+        }
+        frame.videoWidth = videoElement.videoWidth;
+        frame.videoHeight = videoElement.videoHeight;
+        frame.t = timeSinceStartMs;
         if (killRef.current) {
             return;
         }
@@ -104,13 +119,15 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow) {
             return;
         }
         setRecording(prevRecording => ({
-            poses: [...prevRecording.poses, {
-                ...pose,
-                frameIndex: prevRecording.poses.length,
+            frames: [...prevRecording.frames, {
+                ...frame,
+                frameIndex: prevRecording.frames.length,
             }],
         }));
     }, isRecording && posenet && videoElement,
         /* fps= */ 12);
+    // Note: we don't include smoothingWindow and allowMultiplePoses in dependencies because
+    // these never change while the animation is running.
     return [recording, loadingMessage];
 }
 
@@ -123,10 +140,11 @@ function RecorderModule({ recordingCallback }) {
     // Recording settings
     const [posenetLevel, setPosenetLevel] = useState("high");
     const [smoothingWindow, setSmoothingWindow] = useState(4);
+    const [allowMultiplePoses, setAllowMultiplePoses] = useState(false);
 
     const posenet = usePosenet(posenetLevel);
     const [videoElement, setVideoElement] = useState();
-    const [recording, loadingMessage] = useRecording(posenet, videoElement, isRecording, smoothingWindow);
+    const [recording, loadingMessage] = useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses);
 
     const startRecord = () => {
         setIsRecording(true);
@@ -137,9 +155,7 @@ function RecorderModule({ recordingCallback }) {
         // Final tweaks before saving.
         let tweakedRecording = JSON.parse(JSON.stringify(recording));
         tweakedRecording.firstFrame = 0;
-        tweakedRecording.lastFrame = tweakedRecording.poses.length - 1;
-        // Give frame numbers to each pose
-        // tweakedRecording.poses.forEach((pose, index) => pose.frameIndex = index);
+        tweakedRecording.lastFrame = tweakedRecording.frames.length - 1;
         // Ensure time always starts at 0.
         normalizeTime(tweakedRecording);
 
@@ -162,9 +178,15 @@ function RecorderModule({ recordingCallback }) {
                             )}
                         </RadioGroup>
                     </FormControl>
+                    <FormControlLabel control={<Checkbox
+                        checked={allowMultiplePoses}
+                        onChange={(event) => setAllowMultiplePoses(event.target.checked)}
+                        name="checkedF" />} label={t("Allow multiple people estimation")} />
                     <FormControl component="fieldset" className={classes.formControl}>
                         <FormLabel component="legend">{t("Smoothing window")}</FormLabel>
                         <Slider
+                            // Temporarily disallow smoothing for multiple poses.
+                            disabled={allowMultiplePoses}
                             value={smoothingWindow}
                             onChange={(e, newValue) => setSmoothingWindow(newValue)}
                             valueLabelDisplay="auto"
@@ -178,7 +200,7 @@ function RecorderModule({ recordingCallback }) {
                     {t("Loading PoseNet")}
                     <Loader type="Oval" color="#888888" height={48} width={48}></Loader></div>}
             </div>}
-            {isRecording && recording.poses.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">{t("Stop")}</Button>}
+            {isRecording && recording.frames.length > 0 && <Button onClick={stopRecord} variant="contained" color="primary">{t("Stop")}</Button>}
         </div>
 
         {
@@ -209,13 +231,13 @@ function RecorderModule({ recordingCallback }) {
                         readyCallback={(video) => setVideoElement(video)} />
                     {debugView && <PoseCanvas
                         className={debugView ? classes.canvasWhenDebug : classes.canvas}
-                        pose={recording && recording.poses.length && recording.poses[recording.poses.length - 1]}
+                        frame={recording && recording.frames.length && recording.frames[recording.frames.length - 1]}
                         backgroundOpacity={debugView ? 0 : 0.5}
                         debugView={true}
                     />}
                     <PoseCanvas
                         className={debugView ? classes.debugCanvas : classes.canvas}
-                        pose={recording && recording.poses.length && recording.poses[recording.poses.length - 1]}
+                        frame={recording && recording.frames.length && recording.frames[recording.frames.length - 1]}
                         backgroundOpacity={debugView ? 0 : 0.5}
                         debugView={false}
                     />

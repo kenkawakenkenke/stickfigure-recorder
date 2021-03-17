@@ -3,22 +3,22 @@ import {
     useRef,
 } from "react";
 
-import paintPose from "./pose_painter.js";
+import paintFrame from "./pose_painter.js";
 
-const PoseCanvas = ({ className, pose, backgroundOpacity = 1, debugView = false }) => {
+const PoseCanvas = ({ className, frame, backgroundOpacity = 1, debugView = false }) => {
     const ref = useRef();
     useEffect(() => {
-        if (!pose || !ref.current) return;
+        if (!frame || !ref.current) return;
         const canvas = ref.current;
         const ctx = canvas.getContext('2d');
-        paintPose(ctx, pose, backgroundOpacity, debugView);
-    }, [pose]);
+        paintFrame(ctx, frame, backgroundOpacity, debugView);
+    }, [frame]);
 
     return <canvas
         className={className}
         ref={ref}
-        width={pose?.videoWidth || 1}
-        height={pose?.videoHeight || 1}
+        width={frame?.videoWidth || 1}
+        height={frame?.videoHeight || 1}
     >
     </canvas>;
 };

@@ -40,7 +40,7 @@ function EditModule({ recording, editCallback }) {
             }}
             valueLabelDisplay="auto"
             min={0}
-            max={recording.poses.length - 1}
+            max={recording.frames.length - 1}
         />
 
         {/* <Typography id="frame-zoom-slider" gutterBottom>
