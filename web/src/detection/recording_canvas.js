@@ -1,4 +1,5 @@
 import {
+    useEffect,
     useRef,
     useState,
 } from "react";
@@ -12,9 +13,6 @@ import useAnimationFrame from "../common/animation_frame_hook.js";
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: "24px",
-        // margin: "8px",
-        // width: "100%",
-        // height: "250px",
     },
     poseCanvas: {
         border: "solid 1px gray",
@@ -22,10 +20,16 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function RecordingCanvas({ recording }) {
+function RecordingCanvas({ recording, fixFrameToStart, fixFrameToEnd }) {
     const classes = useStyles();
-    const [frame, setFrame] = useState(0);
     const [currentFrameIndex, setCurrentFrameIndex] = useState(recording.firstFrame);
+    useEffect(() => {
+        if (fixFrameToStart) {
+            setCurrentFrameIndex(recording.firstFrame);
+        } else if (fixFrameToEnd) {
+            setCurrentFrameIndex(recording.lastFrame);
+        }
+    }, [fixFrameToStart, fixFrameToEnd, recording]);
 
     const frameIndexRef = useRef(0);
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
@@ -37,17 +41,17 @@ function RecordingCanvas({ recording }) {
             frameIndex = recording.firstFrame;
         }
         frameIndexRef.current = frameIndex;
-        setCurrentFrameIndex(frameIndex);
         if (!killRef.current) {
-            setFrame(recording.frames[frameIndex]);
+            setCurrentFrameIndex(frameIndex);
         }
-    }, recording && recording.frames.length > 0,
+    },
+        /* allowAnimate= */ recording && recording.frames.length > 0 && !fixFrameToStart && !fixFrameToEnd,
         /* fps= */ 12,
         /* dependencies=*/[recording]);
     return <div>
         <PoseCanvas
             className={classes.poseCanvas}
-            frame={frame} />
+            frame={recording.frames[currentFrameIndex]} />
         <Slider
             value={currentFrameIndex}
             valueLabelDisplay="auto"
