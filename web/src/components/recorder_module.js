@@ -10,10 +10,12 @@ import PoseCanvas from "../detection/pose_canvas.js";
 import useAnimationFrame from "../common/animation_frame_hook.js";
 import CameraVideo from "../detection/camera_reader.js";
 import usePosenet, { posenetConfigs } from "../detection/posenet_hook.js";
-import FeatureSmoother from "../detection/smoother.js";
+import PoseSmoother from "../detection/smoother.js";
 import Loader from 'react-loader-spinner';
 import { normalizeTime } from "../detection/recording_editor.js";
 import { useTranslation } from 'react-i18next';
+
+import { distBetween } from "../detection/point_util.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -57,6 +59,89 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+function distBetweenSmootherAndPose(poseSmoother, pose) {
+    let sumDist = 0;
+    let n = 0;
+    pose.keypoints
+        .filter(feature => feature.score > 0.5)
+        .forEach(feature => {
+            let featureSmoother = poseSmoother.smoother(feature);
+            if (featureSmoother.num() === 0) {
+                return;
+            }
+            const smoothed = featureSmoother.smoothed();
+            const dist = distBetween(feature.position, smoothed);
+            sumDist += dist;
+            n++;
+        });
+    if (n === 0) {
+        return undefined;
+    }
+    return sumDist / n;
+}
+
+function performSmoothing(poses, poseSmoothersRef, smoothingWindow) {
+    // Here, we do a greedy match between known smoothers against the new poses.
+    // We first do an O(n^2) matching between smoothers and poses, and then
+    // pair the smoothers and poses from the shortest (average) distance pairs first,
+    // ticking off already used smoothers and poses.
+    const poseSmootherPairs = [];
+    poses.forEach((pose, poseIndex) => {
+        poseSmoothersRef.current.forEach((smoother, smootherIndex) => {
+            const dist = distBetweenSmootherAndPose(smoother, pose);
+            poseSmootherPairs.push({
+                poseIndex,
+                smootherIndex,
+                dist,
+            });
+        });
+    });
+    poseSmootherPairs.sort((i, j) => i.dist - j.dist);
+
+    const usedPoses = {};
+    const usedSmoothers = {};
+    poseSmootherPairs.forEach(({ poseIndex, smootherIndex, dist }) => {
+        if (usedPoses[poseIndex]) return;
+        if (usedSmoothers[smootherIndex]) return;
+
+        poseSmoothersRef.current[smootherIndex].smooth(poses[poseIndex]);
+        poses[poseIndex].smoother = poseSmoothersRef.current[smootherIndex].name;
+
+        usedPoses[poseIndex] = true;
+        usedSmoothers[smootherIndex] = true;
+    });
+
+    // Purge unused smoothers
+    // const purged
+    poseSmoothersRef.current = poseSmoothersRef.current
+        .filter((smoother, smootherIndex) => usedSmoothers[smootherIndex]);
+
+    // Finally add smoothers for poses that haven't yet found a smoother pair (i.e probably new poses).
+    poses
+        .filter((pose, poseIndex) => !usedPoses[poseIndex])
+        .forEach(pose => {
+            // console.log("new pose", pose);
+            const smoother = new PoseSmoother(smoothingWindow);
+            smoother.name = `smoother_${poseSmoothersRef.current.length}`;
+            poseSmoothersRef.current.push(smoother);
+            smoother.smooth(pose);
+        });
+}
+
+async function singlePoseDetection(posenet, videoElement) {
+    const pose = await posenet.estimateSinglePose(videoElement);
+    return [pose];
+}
+
+async function multiPoseDetection(posenet, videoElement) {
+    return posenet.estimateMultiplePoses(videoElement, {
+        flipHorizontal: false,
+        maxDetections: 5,
+        scoreThreshold: 0.5,
+        nmsRadius: 20
+    });
+}
+
 function useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses) {
     const { t, i18n } = useTranslation();
     const [recording, setRecording] = useState({
@@ -72,38 +157,19 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
                 .join(", "))
         : undefined;
 
-    const smoothersRef = useRef({});
+    const smoothersRef = useRef([]);
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
         const net = posenet;
         videoElement.width = videoElement.videoWidth;
         videoElement.height = videoElement.videoHeight;
         const frame = {};
         if (allowMultiplePoses) {
-            const poses = await net.estimateMultiplePoses(videoElement, {
-                flipHorizontal: false,
-                maxDetections: 5,
-                scoreThreshold: 0.5,
-                nmsRadius: 20
-            });
-
-            // TODO(ken): implement smoothing for multiple poses.
-
-            frame.poses = poses;
+            frame.poses = await multiPoseDetection(net, videoElement);
         } else {
-            const pose = await net.estimateSinglePose(videoElement);
-
-            // Smoothing
-            pose.keypoints.forEach(feature => {
-                let smoother = smoothersRef.current[feature.part];
-                if (!smoother) {
-                    smoothersRef.current[feature.part] = smoother = new FeatureSmoother(smoothingWindow);
-                }
-                smoother.add(feature.position);
-                const smoothed = smoother.smoothed();
-                feature.position = smoothed;
-            });
-            frame.poses = [pose];
+            frame.poses = await singlePoseDetection(net, videoElement);
         }
+        performSmoothing(frame.poses, smoothersRef, smoothingWindow);
+
         frame.videoWidth = videoElement.videoWidth;
         frame.videoHeight = videoElement.videoHeight;
         frame.t = timeSinceStartMs;
@@ -182,8 +248,6 @@ function RecorderModule({ recordingCallback }) {
                     <FormControl component="fieldset" className={classes.formControl}>
                         <FormLabel component="legend">{t("Smoothing window")}</FormLabel>
                         <Slider
-                            // Temporarily disallow smoothing for multiple poses.
-                            disabled={allowMultiplePoses}
                             value={smoothingWindow}
                             onChange={(e, newValue) => setSmoothingWindow(newValue)}
                             valueLabelDisplay="auto"
