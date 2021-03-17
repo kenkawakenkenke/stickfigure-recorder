@@ -25,7 +25,8 @@
             "PosenetAccuracy_high": "High (for High-end PCs)",
             "PosenetAccuracy_superHigh": "Superb (for Super high-end PCs)",
             "Loading PoseNet": "Loading PoseNet",
-            "Smoothing window": "Smoothing (higher makes your stick figures smooth but slow)"
+            "Smoothing window": "Smoothing (higher makes your stick figures smooth but slow)",
+            "Allow multiple people estimation": "Allow multiple people estimation (could make the framerate slower)"
         }
     },
     "ja": {
@@ -54,7 +55,8 @@
             "PosenetAccuracy_high": "高（ハイエンドPC）",
             "PosenetAccuracy_superHigh": "超（超ハイエンドPC）",
             "Loading PoseNet": "Posenetロード中・・・",
-            "Smoothing window": "平滑化（高いほどヌルヌルに（その代わりゆっくりと）動きます）"
+            "Smoothing window": "平滑化（高いほどヌルヌルに（その代わりゆっくりと）動きます）",
+            "Allow multiple people estimation": "複数人の検知（少し遅いかもしれません）"
         }
     }
 }

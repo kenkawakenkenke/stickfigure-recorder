@@ -24,35 +24,35 @@ const useStyles = makeStyles((theme) => ({
 
 function RecordingCanvas({ recording }) {
     const classes = useStyles();
-    const [pose, setPose] = useState(0);
-    const [currentFrame, setCurrentFrame] = useState(recording.firstFrame);
+    const [frame, setFrame] = useState(0);
+    const [currentFrameIndex, setCurrentFrameIndex] = useState(recording.firstFrame);
 
-    const frameRef = useRef(0);
+    const frameIndexRef = useRef(0);
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
-        let frame = frameRef.current + 1;
-        if (frame < recording.firstFrame) {
-            frame = recording.firstFrame;
+        let frameIndex = frameIndexRef.current + 1;
+        if (frameIndex < recording.firstFrame) {
+            frameIndex = recording.firstFrame;
         }
-        if (recording.lastFrame < frame) {
-            frame = recording.firstFrame;
+        if (recording.lastFrame < frameIndex) {
+            frameIndex = recording.firstFrame;
         }
-        frameRef.current = frame;
-        setCurrentFrame(frame);
+        frameIndexRef.current = frameIndex;
+        setCurrentFrameIndex(frameIndex);
         if (!killRef.current) {
-            setPose(recording.poses[frame]);
+            setFrame(recording.frames[frameIndex]);
         }
-    }, recording && recording.poses.length > 0,
+    }, recording && recording.frames.length > 0,
         /* fps= */ 12,
-    /* dependencies=*/[recording]);
+        /* dependencies=*/[recording]);
     return <div>
         <PoseCanvas
             className={classes.poseCanvas}
-            pose={pose} />
+            frame={frame} />
         <Slider
-            value={currentFrame}
+            value={currentFrameIndex}
             valueLabelDisplay="auto"
             min={0}
-            max={recording.poses.length - 1}
+            max={recording.frames.length - 1}
         />
     </div>
 }

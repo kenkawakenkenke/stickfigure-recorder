@@ -116,19 +116,10 @@ export function drawLine(ctx, fromPoint, toPoint, width) {
     ctx.stroke();
 }
 
-export default function paintPose(ctx, pose, backgroundOpacity = 1, debugView = false) {
-    const width = ctx.canvas.width;
-    const height = ctx.canvas.height;
+function paintPose(ctx, pose, debugView = false) {
     const features =
         pose.keypoints.reduce((accum, c) => { accum[c.part] = c; return accum; }, {});
     addSyntheticFeatures(features);
-
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = `rgba(255,255,255,${backgroundOpacity})`;
-    if (pose.dropped) {
-        ctx.fillStyle = "gray";
-    }
-    ctx.fillRect(0, 0, width, height);
 
     if (debugView) {
         Object.values(features).forEach(feature => {
@@ -154,4 +145,18 @@ export default function paintPose(ctx, pose, backgroundOpacity = 1, debugView = 
     segments.forEach(segment => {
         segment.features.forEach(feature => usedFeaturesSet[feature] = true);
     });
+}
+
+export default function paintFrame(ctx, frame, backgroundOpacity = 1, debugView = false) {
+    const width = ctx.canvas.width;
+    const height = ctx.canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = `rgba(255,255,255,${backgroundOpacity})`;
+    if (frame.dropped) {
+        ctx.fillStyle = "gray";
+    }
+    ctx.fillRect(0, 0, width, height);
+
+    frame.poses.forEach(pose => paintPose(ctx, pose, debugView));
 }

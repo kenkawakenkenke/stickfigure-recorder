@@ -32,42 +32,40 @@ function RecordingsView({ recording, outEvery, children, updateRecordingCallback
     const classes = useStyles();
 
     const sparseRecordings = [];
-    for (let i = 0; i < recording.poses.length; i += outEvery) {
-        sparseRecordings.push(recording.poses[i]);
+    for (let i = 0; i < recording.frames.length; i += outEvery) {
+        sparseRecordings.push(recording.frames[i]);
     }
-    function setFirstFrame(pose) {
+    function setFirstFrame(frame) {
         const newRecording = JSON.parse(JSON.stringify(recording));
-        setFrameStartEnd(newRecording, pose.frameIndex, newRecording.lastFrame);
+        setFrameStartEnd(newRecording, frame.frameIndex, newRecording.lastFrame);
         updateRecordingCallback(newRecording);
     }
-    function setLastFrame(pose) {
+    function setLastFrame(frame) {
         const newRecording = JSON.parse(JSON.stringify(recording));
-        setFrameStartEnd(newRecording, newRecording.lastFrame, pose.frameIndex);
+        setFrameStartEnd(newRecording, newRecording.lastFrame, frame.frameIndex);
         updateRecordingCallback(newRecording);
     }
     return <div className={classes.poseParent}>
-        {sparseRecordings.map(pose =>
+        {sparseRecordings.map(frame =>
             <div
-                key={`minipose_${pose.frameIndex}`}
-                className={classes.poseDiv}
+                key={`miniframe_${frame.frameIndex}`}
+                className={classes.frameDiv}
             >
                 <PoseCanvas
                     className={classes.poseCanvas}
-                    pose={pose}
-                    width={pose.videoWidth || 100}
-                    height={pose.videoHeight || 100}
+                    frame={frame}
                 />
                 <div>
-                    <b>{pose.frameIndex}</b> <small>{formatTime(pose.t)}</small>
+                    <b>{frame.frameIndex}</b> <small>{formatTime(frame.t)}</small>
                 </div>
                 <div>
                     <Button
-                        disabled={pose.frameIndex >= recording.lastFrame}
-                        onClick={() => setFirstFrame(pose)}
+                        disabled={frame.frameIndex >= recording.lastFrame}
+                        onClick={() => setFirstFrame(frame)}
                         size="small">First frame</Button>
                     <Button
-                        disabled={pose.frameIndex <= recording.firstFrame}
-                        onClick={() => setLastFrame(pose)}
+                        disabled={frame.frameIndex <= recording.firstFrame}
+                        onClick={() => setLastFrame(frame)}
                         size="small"
                     >Last frame</Button>
                 </div>
