@@ -7,24 +7,6 @@ import RecordingCanvas from "../detection/recording_canvas.js";
 import { setFrameStartEnd } from "../detection/recording_editor.js";
 import { useTranslation } from 'react-i18next';
 
-// const useStyles = makeStyles((theme) => ({
-//     root: {
-//         // width: "100%",
-//         // height: "250px",
-//     },
-//     canvasParent: {
-//         position: "relative",
-//         // backgroundColor: "red",
-//     },
-//     poses: {
-
-//     },
-//     canvas: {
-//         // position: "absolute",
-//     }
-// }));
-
-
 const RangeSlider = withStyles({
     root: {
         color: '#220000',

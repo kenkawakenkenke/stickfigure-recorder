@@ -13,9 +13,6 @@ import useAnimationFrame from "../common/animation_frame_hook.js";
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: "24px",
-        // margin: "8px",
-        // width: "100%",
-        // height: "250px",
     },
     poseCanvas: {
         border: "solid 1px gray",
@@ -47,7 +44,8 @@ function RecordingCanvas({ recording, fixFrameToStart, fixFrameToEnd }) {
         if (!killRef.current) {
             setCurrentFrameIndex(frameIndex);
         }
-    }, recording && recording.frames.length > 0 && !fixFrameToStart && !fixFrameToEnd,
+    },
+        /* allowAnimate= */ recording && recording.frames.length > 0 && !fixFrameToStart && !fixFrameToEnd,
         /* fps= */ 12,
         /* dependencies=*/[recording]);
     return <div>

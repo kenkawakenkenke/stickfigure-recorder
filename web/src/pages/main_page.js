@@ -16,18 +16,11 @@ import { useTranslation } from 'react-i18next';
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: "24px",
-        // margin: "8px",
-        // width: "100%",
-        // height: "250px",
     },
     descriptionCard: {
-        // margin: "24px",
     },
     moduleCard: {
         marginTop: "24px",
-        // margin: "24px",
-        // marginLeft: "24px",
-        // marginRight: "24px",
         padding: "8px",
     },
     smallGif: {

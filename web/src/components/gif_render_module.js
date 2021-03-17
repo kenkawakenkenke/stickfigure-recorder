@@ -13,15 +13,11 @@ import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        // width: "100%",
-        // height: "250px",
     },
     canvasParent: {
         position: "relative",
-        // backgroundColor: "red",
     },
     canvas: {
-        // position: "absolute",
     }
 }));
 
@@ -68,7 +64,6 @@ function GifRenderModule({ recording }) {
             gif.on('finished', function (blob) {
                 setRendering(false);
                 console.log("finished");
-                // window.open(URL.createObjectURL(blob));
                 var a = document.createElement("a");
                 a.href = URL.createObjectURL(blob);
                 a.target = '_blank';
