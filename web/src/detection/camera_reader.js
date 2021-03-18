@@ -1,4 +1,5 @@
 import {
+    useCallback,
     useEffect,
     useRef,
 } from "react";
@@ -23,21 +24,20 @@ async function setupCamera(video) {
     }
 }
 
-function CameraVideo({ doLoad, readyCallback, className }) {
+function CameraVideo({ readyCallback, className }) {
     const videoRef = useRef();
 
+    const readyCallbackRef = useCallback(readyCallback, [readyCallback]);
     useEffect(() => {
-        if (!doLoad) return;
         const video = videoRef.current;
         async function load() {
             await setupCamera(video);
             video.play();
 
-            readyCallback(video);
+            readyCallbackRef(video);
         }
         load();
         return () => {
-            console.log("====== kill video");
             let stream = video.srcObject;
             let tracks = stream.getTracks();
             tracks.forEach(function (track) {
@@ -46,7 +46,7 @@ function CameraVideo({ doLoad, readyCallback, className }) {
             video.srcObject = null;
             video.pause();
         }
-    }, [doLoad]);
+    }, [readyCallbackRef]);
 
     return <video
         className={className}

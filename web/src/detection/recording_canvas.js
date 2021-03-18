@@ -31,7 +31,7 @@ function RecordingCanvas({ recording, fixFrame }) {
     }, [fixFrame]);
 
     const frameIndexRef = useRef(0);
-    useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
+    useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, isDead) => {
         let frameIndex = frameIndexRef.current + 1;
         if (frameIndex < recording.firstFrame) {
             frameIndex = recording.firstFrame;
@@ -40,7 +40,7 @@ function RecordingCanvas({ recording, fixFrame }) {
             frameIndex = recording.firstFrame;
         }
         frameIndexRef.current = frameIndex;
-        if (!killRef.current) {
+        if (!isDead()) {
             setCurrentFrameIndex(frameIndex);
         }
     },

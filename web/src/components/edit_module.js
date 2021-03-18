@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
     Typography, Slider, TextField,
-    FormControlLabel, Checkbox,
+    FormControlLabel,
     FormControl, FormLabel, Radio, RadioGroup,
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
@@ -31,26 +31,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ExportSizeControl({ recording, editCallback }) {
-    const classes = useStyles();
     const { t } = useTranslation();
     const [aspectRatioConstraint, setAspectRatioConstraint] = useState("video");
     function constrainHeight(width, constraint = aspectRatioConstraint) {
         switch (constraint) {
             case "video":
-                return width * recording.frames[0].videoHeight / recording.frames[0].videoWidth;
+                return Math.floor(width * recording.frames[0].videoHeight / recording.frames[0].videoWidth);
             case "1:1":
                 return width;
             case "none":
+            default:
                 return recording.exportHeight;
         }
     }
     function constrainWidth(height, constraint = aspectRatioConstraint) {
         switch (constraint) {
             case "video":
-                return height * recording.frames[0].videoWidth / recording.frames[0].videoHeight;
+                return Math.floor(height * recording.frames[0].videoWidth / recording.frames[0].videoHeight);
             case "1:1":
                 return height;
             case "none":
+            default:
                 return recording.exportWidth;
         }
     }

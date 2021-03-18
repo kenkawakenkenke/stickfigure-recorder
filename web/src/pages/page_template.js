@@ -1,9 +1,8 @@
 import {
   useEffect,
-  useState,
 } from "react";
 import {
-  Button, Paper, Typography
+  Typography
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles';
@@ -59,7 +58,6 @@ function AdsCard(props) {
 }
 
 function BottomBar() {
-  const { t } = useTranslation();
   const classes = useStyles();
   return <div className={classes.bottomBar}>
     <div className={classes.linkBlock}>

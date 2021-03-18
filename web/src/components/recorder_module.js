@@ -132,7 +132,6 @@ function performSmoothing(poses, poseSmoothersRef, smoothingWindow) {
     poses
         .filter((pose, poseIndex) => !usedPoses[poseIndex])
         .forEach(pose => {
-            // console.log("new pose", pose);
             const smoother = new PoseSmoother(smoothingWindow);
             smoother.name = `smoother_${poseSmoothersRef.current.length}`;
             poseSmoothersRef.current.push(smoother);
@@ -155,7 +154,7 @@ async function multiPoseDetection(posenet, videoElement) {
 }
 
 function useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const [recording, setRecording] = useState({
         frames: [],
     });
@@ -170,7 +169,7 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
         : undefined;
 
     const smoothersRef = useRef([]);
-    useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, killRef) => {
+    useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, isDead) => {
         const net = posenet;
         videoElement.width = videoElement.videoWidth;
         videoElement.height = videoElement.videoHeight;
@@ -185,7 +184,8 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
         frame.videoWidth = videoElement.videoWidth;
         frame.videoHeight = videoElement.videoHeight;
         frame.t = timeSinceStartMs;
-        if (killRef.current) {
+
+        if (isDead()) {
             return;
         }
         if (timeSinceStartMs === 0) {
@@ -200,7 +200,8 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
         }));
     },
         /* allowAnimate= */ isRecording && posenet && videoElement,
-        /* fps= */ DEFAULT_FRAMERATE);
+        /* fps= */ DEFAULT_FRAMERATE,
+    /* dependencies= */[videoElement]);
     // Note: we don't include smoothingWindow and allowMultiplePoses in dependencies because
     // these never change while the animation is running.
     return [recording, loadingMessage];
@@ -208,7 +209,7 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
 
 function RecorderModule({ recordingCallback }) {
     const classes = useStyles();
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const [isRecording, setIsRecording] = useState(false);
 
@@ -311,10 +312,9 @@ function RecorderModule({ recordingCallback }) {
                         {loadingMessage}
                     </div>}
 
-                    <CameraVideo
+                    {isRecording && <CameraVideo
                         className={classes.videoCanvas}
-                        doLoad={isRecording}
-                        readyCallback={(video) => setVideoElement(video)} />
+                        readyCallback={setVideoElement} />}
                     {debugView && <PoseCanvas
                         className={debugView ? classes.canvasWhenDebug : classes.canvas}
                         frame={recording && recording.frames.length && recording.frames[recording.frames.length - 1]}

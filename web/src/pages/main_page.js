@@ -1,10 +1,9 @@
 import {
-    useEffect,
     useState,
 } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import {
-    Button, Link, Paper, Typography
+    Button, Paper, Typography
 } from "@material-ui/core";
 import PageTemplate from "./page_template.js";
 
@@ -77,15 +76,9 @@ function PageDescription() {
     </div >
 }
 
-function BottomBar() {
-    return <div>
-        Terms and conditions
-    </div>
-}
-
 function MainPage() {
     const classes = useStyles();
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const [recording, setRecording] = useState();
 

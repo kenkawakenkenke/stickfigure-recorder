@@ -6,39 +6,46 @@ import {
 const useAnimationFrame = (callback, allowAnimate, fps, dependencies = []) => {
     const outputEveryMs = 1000 / fps;
 
-    const animationKillFlag = useRef(false);
+    const animationKillFlag = useRef({});
     const timeStartRef = useRef();
     const prevOutputTimeRef = useRef();
     const animationRequestRef = useRef();
-    const animate = async time => {
-        if (animationKillFlag.current) {
-            return;
-        }
-        if (!timeStartRef.current) {
-            timeStartRef.current = time;
-        }
 
-        const timeSinceLastOutput = time - prevOutputTimeRef.current || outputEveryMs || 0;
-        if (!fps || timeSinceLastOutput >= outputEveryMs) {
-            await callback(timeSinceLastOutput, time - timeStartRef.current, animationKillFlag);
-            prevOutputTimeRef.current = time;
-        }
-        if (!animationKillFlag.current) {
-            animationRequestRef.current = requestAnimationFrame(animate);
-        }
-    }
-
+    const animationIDAccum = useRef(100);
     useEffect(() => {
-        // console.log("useAnimationFrame");
         if (!allowAnimate) {
             return;
         }
-        animationKillFlag.current = false;
-        animationRequestRef.current = requestAnimationFrame(animate);
-        return () => {
-            animationKillFlag.current = true;
-            cancelAnimationFrame(animationRequestRef.current);
+        const id = animationIDAccum.current;
+        animationIDAccum.current++;
+        const isDead = () => animationKillFlag.current[id];
+        const markAsDead = () => animationKillFlag.current[id] = true;
+
+        const animate = async time => {
+            if (isDead()) {
+                return;
+            }
+            if (!timeStartRef.current) {
+                timeStartRef.current = time;
+            }
+
+            const prevOutputTimeRefValue = prevOutputTimeRef.current;
+            const timeSinceLastOutput = time - prevOutputTimeRefValue;
+            if (!fps || isNaN(timeSinceLastOutput) || timeSinceLastOutput >= outputEveryMs) {
+                await callback(timeSinceLastOutput, time - timeStartRef.current, isDead);
+                prevOutputTimeRef.current = time;
+            }
+            if (!isDead()) {
+                animationRequestRef.current = { frame: requestAnimationFrame(animate), fps }
+            }
         }
-    }, [...dependencies, allowAnimate]);
+
+        animationRequestRef.current = { frame: requestAnimationFrame(animate), fps }
+        return () => {
+            // animationKillFlag.current[id] = true;
+            markAsDead();
+            cancelAnimationFrame(animationRequestRef.current.frame);
+        }
+    }, [...dependencies, allowAnimate, fps]);
 };
 export default useAnimationFrame;

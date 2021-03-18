@@ -34,7 +34,7 @@ function GifRenderModule({ recording }) {
         setRendering(true);
         const render = async () => {
             if (!recording.frames.length) {
-                throw "nothing to export";
+                throw new Error("nothing to export");
             }
             const drawWidth = recording.exportWidth;
             const drawHeight = recording.exportHeight;

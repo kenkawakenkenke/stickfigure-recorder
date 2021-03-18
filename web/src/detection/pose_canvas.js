@@ -12,7 +12,7 @@ const PoseCanvas = ({ className, frame, drawWidth, drawHeight, backgroundOpacity
         const canvas = ref.current;
         const ctx = canvas.getContext('2d');
         paintFrame(ctx, frame, backgroundOpacity, debugView);
-    }, [frame]);
+    }, [frame, backgroundOpacity, debugView]);
 
     return <canvas
         className={className}
@@ -22,5 +22,4 @@ const PoseCanvas = ({ className, frame, drawWidth, drawHeight, backgroundOpacity
     >
     </canvas>;
 };
-// });
 export default PoseCanvas;
