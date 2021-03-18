@@ -43,7 +43,7 @@ async function uploadToBucket(storage, gifID, gifBuffer) {
 }
 
 async function doAddToGallery(firestore, gifID, recording, url) {
-    await firestore.collection("galllery")
+    await firestore.collection("gallery")
         .doc(gifID)
         .set({
             tCreated: new Date(),
