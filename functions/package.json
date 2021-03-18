@@ -1,0 +1,30 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "12"
+  },
+  "main": "src/index.js",
+  "dependencies": {
+    "canvas": "^2.7.0",
+    "core-js": "^3.9.0",
+    "firebase-admin": "^9.5.0",
+    "firebase-functions": "^3.11.0",
+    "gif-encoder-2": "^1.0.5",
+    "install": "^0.13.0",
+    "npm": "^7.6.3",
+    "stickfigurecommon": "file:./sub_modules/stickfigurecommon",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^0.2.0"
+  },
+  "private": true
+}

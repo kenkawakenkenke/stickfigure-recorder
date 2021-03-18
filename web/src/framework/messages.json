@@ -17,8 +17,14 @@
             "Edit":"Edit",
             "Export":"Export",
             "Set the start and end range to export":"Set the start and end range to export:",
-            "Do export gif": "Export .GIF file",
+            "Do export gif": "Download .GIF file",
+            "Do export gif button": "Download",
             "Rendering GIF": "Rendering GIF...",
+            "Upload to gallery": "Upload GIF to gallery",
+            "Upload to gallery disclaimer": "Your gif will be uploaded and <1>shared publicly in our gallery</1>.",
+            "Upload to gallery button": "Upload",
+            "Upload success": "Upload success! <1>Open the gallery to see your upload</1>",
+            "Uploading GIF": "Uploading GIF...",
             "PosenetAccuracy": "Posenet accuracy",
             "PosenetAccuracy_low": "Low (for mobile)",
             "PosenetAccuracy_medium": "Medium (for Medium PCs)",
@@ -36,7 +42,8 @@
             "Constrain aspect ratio": "Constrain aspect ratio",
             "Same as video": "Same as video",
             "1_1": "1:1",
-            "No aspect ratio constraint": "None"
+            "No aspect ratio constraint": "None",
+            "Gallery description": "These stick figures were recently uploaded by users:"
         }
     },
     "ja": {
@@ -57,8 +64,14 @@
             "Edit":"編集",
             "Export":"出力",
             "Set the start and end range to export":"出力する開始と終了位置を選んでください：",
-            "Do export gif": "GIFファイルを出力",
+            "Do export gif": "GIFファイルをダウンロード",
+            "Do export gif button": "ダウンロードする",
             "Rendering GIF": "GIFファイルを準備中...",
+            "Upload to gallery": "GIFをギャラリーにアップロードする",
+            "Upload to gallery disclaimer": "GIFをアップロードすると、<1>ギャラリーページで公開されます</1>。",
+            "Upload to gallery button": "アップロード",
+            "Upload success": "アップロードが完了しました。<1>ギャラリーを開いてアップロードしたGIFを見ましょう。</1>",
+            "Uploading GIF": "ギャラリーにアップロード中...",
             "PosenetAccuracy": "Posenet精度",
             "PosenetAccuracy_low": "低（スマホ）",
             "PosenetAccuracy_medium": "中（中級パソコン）",
@@ -76,7 +89,8 @@
             "Constrain aspect ratio": "アスペクト比",
             "Same as video": "ビデオと同じ",
             "1_1": "1:1",
-            "No aspect ratio constraint": "制約なし"
+            "No aspect ratio constraint": "制約なし",
+            "Gallery description": "最近ユーザーによってアップロードされた棒人間です。"
         }
     }
 }

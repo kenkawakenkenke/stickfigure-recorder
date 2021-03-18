@@ -3,7 +3,7 @@ import {
     useRef,
 } from "react";
 
-import paintFrame from "./pose_painter.js";
+import common from "stickfigurecommon";
 
 const PoseCanvas = ({ className, frame, drawWidth, drawHeight, backgroundOpacity = 1, debugView = false }) => {
     const ref = useRef();
@@ -11,7 +11,7 @@ const PoseCanvas = ({ className, frame, drawWidth, drawHeight, backgroundOpacity
         if (!frame || !ref.current) return;
         const canvas = ref.current;
         const ctx = canvas.getContext('2d');
-        paintFrame(ctx, frame, backgroundOpacity, debugView);
+        common.paintFrame(ctx, frame, backgroundOpacity, debugView);
     }, [frame, backgroundOpacity, debugView]);
 
     return <canvas

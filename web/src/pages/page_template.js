@@ -73,6 +73,9 @@ function BottomBar() {
       <Link to="/contact">Contact</Link>
     </div>
     <div className={classes.linkBlock}>
+      <Link to="/gallery">Gallery</Link>
+    </div>
+    <div className={classes.linkBlock}>
       <TwitterFollowButton screenName={'kenkawakenkenke'} />
     </div>
   </div>

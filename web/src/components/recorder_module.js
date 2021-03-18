@@ -15,7 +15,7 @@ import Loader from 'react-loader-spinner';
 import { normalizeTime } from "../detection/recording_editor.js";
 import { useTranslation } from 'react-i18next';
 
-import { distBetween } from "../detection/point_util.js";
+import common from "stickfigurecommon";
 
 const DEFAULT_FRAMERATE = 12;
 const useStyles = makeStyles((theme) => ({
@@ -85,7 +85,7 @@ function distBetweenSmootherAndPose(poseSmoother, pose) {
                 return;
             }
             const smoothed = featureSmoother.smoothed();
-            const dist = distBetween(feature.position, smoothed);
+            const dist = common.PointUtil.distBetween(feature.position, smoothed);
             sumDist += dist;
             n++;
         });

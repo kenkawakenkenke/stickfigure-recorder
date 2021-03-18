@@ -9,7 +9,7 @@ import PageTemplate from "./page_template.js";
 
 import RecorderModule from "../components/recorder_module.js";
 import EditModule from "../components/edit_module.js";
-import GifRenderModule from "../components/gif_render_module.js";
+import ExportModule from "../components/export_module.js";
 import { Trans } from 'react-i18next';
 import { useTranslation } from 'react-i18next';
 
@@ -112,7 +112,7 @@ function MainPage() {
         {/* Render */}
         <Paper elevation={4} className={classes.moduleCard}>
             <Typography variant="h4">3. {t("Export")}</Typography>
-            {recording && <GifRenderModule recording={recording} />}
+            {recording && <ExportModule recording={recording} />}
         </Paper >
     </PageTemplate >;
 }
