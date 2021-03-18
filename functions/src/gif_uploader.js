@@ -57,6 +57,11 @@ async function doAddToGallery(firestore, gifID, recording, url) {
                 numFrames: recording.lastFrame - recording.firstFrame,
             }
         });
+    await firestore.collection("gallery")
+        .doc(gifID)
+        .collection("recording")
+        .doc("recording")
+        .set(recording);
 }
 
 function fitToSize(recording, maxSize) {
