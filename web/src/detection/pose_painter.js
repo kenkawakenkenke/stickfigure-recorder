@@ -23,6 +23,7 @@ const segments = [
 ];
 
 const debugSegments = [
+    { features: ["leftEar", "headCenter", "rightEar", "nose", "leftEar"] },
     { features: ["nose", "leftEye", "leftEar"] },
     { features: ["nose", "rightEye", "rightEar"] },
     { features: ["nose", "neck"] },
@@ -36,54 +37,83 @@ const debugSegments = [
     { features: ["rightHip", "rightKnee", "rightAnkle", "rightFoot"] },
 ];
 
-function addSyntheticFeatures(features) {
-    const syntheticFeatures = [
-        {
-            part: "neck",
-            position:
+const syntheticFeatureSpecs = [
+    {
+        part: "neck",
+        dependencies: ["leftShoulder", "rightShoulder", "nose"],
+        positionFunc:
+            features =>
                 avgPosition(
                     avgPosition(features["leftShoulder"].position, features["rightShoulder"].position),
                     features["nose"].position,
                     1 / 3),
-        },
-        {
-            part: "hip",
-            position:
+    },
+    {
+        part: "headCenter",
+        dependencies: ["nose", "leftEar", "rightEar"],
+        positionFunc:
+            features =>
+                avgPosition(
+                    avgPosition(features["leftEar"].position, features["rightEar"].position),
+                    features["nose"].position),
+    },
+    {
+        part: "hip",
+        dependencies: ["leftHip", "rightHip"],
+        positionFunc:
+            features =>
                 avgPosition(features["leftHip"].position, features["rightHip"].position)
-        },
-        {
-            part: "leftHand",
-            position:
+    },
+    {
+        part: "leftHand",
+        dependencies: ["leftElbow", "leftWrist"],
+        positionFunc:
+            features =>
                 extendPosition(features["leftElbow"].position, features["leftWrist"].position, 0.25),
-        },
-        {
-            part: "rightHand",
-            position:
+    },
+    {
+        part: "rightHand",
+        dependencies: ["rightElbow", "rightWrist"],
+        positionFunc:
+            features =>
                 extendPosition(features["rightElbow"].position, features["rightWrist"].position, 0.25),
-        },
-        {
-            part: "leftFoot",
-            position:
+    },
+    {
+        part: "leftFoot",
+        dependencies: ["leftKnee", "leftAnkle"],
+        positionFunc:
+            features =>
                 extendPosition(features["leftKnee"].position, features["leftAnkle"].position, 0.25),
-        },
-        {
-            part: "rightFoot",
-            position:
+    },
+    {
+        part: "rightFoot",
+        dependencies: ["rightKnee", "rightAnkle"],
+        positionFunc:
+            features =>
                 extendPosition(features["rightKnee"].position, features["rightAnkle"].position, 0.25),
-        }
-    ];
-    syntheticFeatures.forEach(feature => features[feature.part] = feature);
+    }
+];
+
+function addSyntheticFeatures(features) {
+    syntheticFeatureSpecs.forEach(spec => {
+        features[spec.part] = {
+            part: spec.part,
+            position: spec.positionFunc(features),
+            score: spec.dependencies
+                .map(dependency => features[dependency].score)
+                .reduce((min, s) => Math.min(min, s), 1),
+        };
+    });
 }
 
-export function drawCircle(ctx, point, radius, fillColor = "black") {
+function drawCircle(ctx, point, radius, fillColor = "black") {
     ctx.beginPath();
     ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
     // ctx.strokeText(text, wrist.position.x, wrist.position.y);
     ctx.fillStyle = fillColor;
     ctx.fill();
 }
-
-export function drawLines(ctx, points, width, style = "black") {
+function drawLines(ctx, points, width, style = "black") {
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
@@ -94,13 +124,17 @@ export function drawLines(ctx, points, width, style = "black") {
     ctx.lineJoin = "round";
     ctx.stroke();
 }
-export function drawLine(ctx, fromPoint, toPoint, width) {
+function drawLine(ctx, fromPoint, toPoint, width) {
     ctx.beginPath();
     ctx.moveTo(fromPoint.x, fromPoint.y);
     ctx.lineTo(toPoint.x, toPoint.y);
     ctx.strokeStyle = "black";
     ctx.lineWidth = width;
     ctx.stroke();
+}
+function drawText(ctx, point, text, fillColor = "black") {
+    ctx.fillStyle = fillColor;
+    ctx.fillText(text, point.x, point.y);
 }
 
 function paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView = false) {
@@ -128,14 +162,32 @@ function paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView = false) {
 
     const lineWidth = toDrawScale(20);
     segments.forEach(segment => {
-        const points = segment.features
-            .map(feature => toDrawPoint(features[feature].position));
-        drawLines(ctx, points, lineWidth);
+        // Array of bools describing whether a feature in a segment has high enough quality.
+        const qualityOK = segment.features.map(part => features[part].score > 0.5);
+        let polyline = [];
+        for (let i = 0; i < qualityOK.length; i++) {
+            const ok =
+                qualityOK[i]
+                // Also allow points that are next to OK points.
+                || (i > 0 && qualityOK[i - 1])
+                || (i + 1 < qualityOK.length && qualityOK[i + 1]);
+            if (ok) {
+                polyline.push(toDrawPoint(features[segment.features[i]].position));
+            } else {
+                if (polyline.length >= 2) {
+                    drawLines(ctx, polyline, lineWidth);
+                }
+                polyline = [];
+            }
+        }
+        if (polyline.length >= 2) {
+            drawLines(ctx, polyline, lineWidth);
+        }
     });
     // Draw face
     drawCircle(ctx,
-        toDrawPoint(features["nose"].position),
-        Math.ceil(distBetween(toDrawPoint(features["nose"].position), toDrawPoint(features["neck"].position))));
+        toDrawPoint(features["headCenter"].position),
+        Math.ceil(distBetween(toDrawPoint(features["headCenter"].position), toDrawPoint(features["neck"].position))));
 }
 
 export default function paintFrame(ctx, frame, backgroundOpacity = 1, debugView = false) {
