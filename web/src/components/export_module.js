@@ -40,7 +40,7 @@ function upload(recording, finishedCallback, addToGallery) {
             recording: recording,
             addToGallery,
         }).then(result => {
-            console.log(result.data);
+            // console.log(result.data);
             finishedCallback(result.data);
         })
         .catch(err => alert("Error!", err));
