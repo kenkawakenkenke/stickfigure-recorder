@@ -44,13 +44,16 @@ const useStyles = makeStyles((theme) => ({
     canvasWhenDebug: {
         position: "absolute",
         top: "0px",
-        left: "100px",
+        left: "200px",
+        // left: "0px",
         width: "80%",
     },
     debugCanvas: {
         position: "absolute",
-        top: "0",
-        left: "200px",
+        top: "0px",
+        // left: "200px",
+        left: "0px",
+        width: "80%",
     },
     poses: {
     },
@@ -316,13 +319,13 @@ function RecorderModule({ recordingCallback }) {
                         className={classes.videoCanvas}
                         readyCallback={setVideoElement} />}
                     {debugView && <PoseCanvas
-                        className={debugView ? classes.canvasWhenDebug : classes.canvas}
+                        className={debugView ? classes.debugCanvas : classes.canvas}
                         frame={recording && recording.frames.length && recording.frames[recording.frames.length - 1]}
                         backgroundOpacity={debugView ? 0 : 0.5}
                         debugView={true}
                     />}
                     <PoseCanvas
-                        className={debugView ? classes.debugCanvas : classes.canvas}
+                        className={debugView ? classes.canvasWhenDebug : classes.canvas}
                         frame={recording && recording.frames.length && recording.frames[recording.frames.length - 1]}
                         backgroundOpacity={debugView ? 0 : 0.5}
                         debugView={false}
