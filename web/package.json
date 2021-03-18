@@ -23,6 +23,7 @@
     "react-scripts": "4.0.3",
     "react-share": "^4.4.0",
     "react-twitter-embed": "^3.0.3",
+    "stickfigurecommon": "file:../stickfigurecommon",
     "web-vitals": "^1.1.1"
   },
   "scripts": {

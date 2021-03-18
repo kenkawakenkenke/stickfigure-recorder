@@ -6,10 +6,10 @@ import {
     Button
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import paintFrame from "../detection/pose_painter.js";
 import GIF from "gif.js.optimized";
 import Loader from 'react-loader-spinner';
 import { useTranslation } from 'react-i18next';
+import common from "stickfigurecommon";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -51,7 +51,7 @@ function GifRenderModule({ recording }) {
             const delay = 1000 / recording.framerate;
             for (let index = recording.firstFrame; index < recording.lastFrame; index++) {
                 const frame = recording.frames[index];
-                paintFrame(ctx, frame);
+                common.paintFrame(ctx, frame);
                 // add an image element
                 gif.addFrame(ctx, {
                     delay,
