@@ -43,7 +43,11 @@ function upload(recording, finishedCallback, addToGallery) {
             // console.log(result.data);
             finishedCallback(result.data);
         })
-        .catch(err => alert("Error!", err));
+        .catch(err => {
+            alert("Error!", err);
+            finishedCallback({ err });
+        }
+        );
 }
 
 async function exportToGif(recording, canvas, progressCallback) {
@@ -129,9 +133,12 @@ function GifGalleryUploader({ recording }) {
 
     function doUpload() {
         setProcessing(true);
+        setUploadedGifInfo(undefined);
         upload(recording, (uploadResponse) => {
             setProcessing(false);
-            setUploadedGifInfo(uploadResponse);
+            if (!uploadResponse.err) {
+                setUploadedGifInfo(uploadResponse);
+            }
         },
         /* addToGallery= */ true);
     }
