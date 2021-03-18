@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/functions";
+import "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBiBzeHgiC2nHzsxMKgWP0r58ODqh7rtnk",
@@ -17,6 +18,7 @@ if (firebase.apps.length === 0) {
     if (process.env.NODE_ENV === "development") {
         const localHost = "localhost";
         firebase.app().functions("asia-northeast1").useEmulator(localHost, 5001);
+        firebase.firestore().useEmulator(localHost, 8080);
     }
 }
 firebase.analytics();

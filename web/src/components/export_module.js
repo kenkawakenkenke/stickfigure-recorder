@@ -3,24 +3,48 @@ import {
     useState,
 } from "react";
 import {
-    Button
+    Button, Typography
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import GIF from "gif.js.optimized";
 import Loader from 'react-loader-spinner';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import common from "stickfigurecommon";
+import firebase from "../framework/setup_firebase.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
     },
-    canvasParent: {
-        position: "relative",
-    },
     canvas: {
         display: "none",
+    },
+    exportContainer: {
+        border: "1px solid #bbbbbb",
+        padding: "12px",
+        borderRadius: "8px",
+        marginTop: "8px",
+    },
+
+    loaderProgress: {
+        display: "flex",
+        alignItems: "center",
+    },
+    loader: {
+        margin: "4px",
     }
 }));
+
+function upload(recording, finishedCallback, addToGallery) {
+    firebase.app().functions("asia-northeast1")
+        .httpsCallable('uploadGifRecording')({
+            recording: recording,
+            addToGallery,
+        }).then(result => {
+            console.log(result.data);
+            finishedCallback(result.data);
+        })
+        .catch(err => alert("Error!", err));
+}
 
 async function exportToGif(recording, canvas, progressCallback) {
     progressCallback(0);
@@ -65,38 +89,95 @@ async function exportToGif(recording, canvas, progressCallback) {
     gif.render();
 }
 
-function ExportModule({ recording }) {
+function ProgressViewer({ progress, title }) {
     const classes = useStyles();
+    const isProcessing = progress >= 0;
+    if (!isProcessing) {
+        return <div></div>;
+    }
+    return <div>
+        {title}
+        <div className={classes.loaderProgress}>
+            <Loader className={classes.loader} type="Oval" color="#888888" height={48} width={48} />
+            {progress > 0 && `${Math.floor(progress * 100)}%`}
+        </div>
+    </div>;
+}
+function GifFileExporter({ recording, canvas }) {
     const { t } = useTranslation();
 
     const [progress, setProgress] = useState();
     const isProcessing = progress >= 0;
-    const canvasRef = useRef();
 
-    function doExportToGif() {
-        exportToGif(recording, canvasRef.current, setProgress);
+    function doExport() {
+        exportToGif(recording, canvas, setProgress);
     }
     return <div>
-        <div
-            className={classes.canvasParent}>
-            {!isProcessing &&
-                <Button onClick={doExportToGif} variant="contained" color="primary">
-                    {t("Do export gif")}
-                </Button>
-            }
-            {isProcessing && <div>
-                {t("Rendering GIF")}
-                <Loader type="Oval" color="#888888" height={48} width={48}></Loader>
-            </div>}
-            {progress && `${Math.floor(progress * 100)}%`}
+        <Typography variant="h5">{t("Do export gif")}</Typography>
+        <Button onClick={doExport} disabled={isProcessing} variant="contained" color="primary">
+            {t("Do export gif button")}
+        </Button>
+        <ProgressViewer progress={progress} title={t("Rendering GIF")} />
+    </div>;
+}
 
-            {/* Invisible canvas for rendering. */}
-            <div
-                className={classes.canvas}>
-                <canvas ref={canvasRef}></canvas>
-            </div>
+function GifGalleryUploader({ recording }) {
+    const { t } = useTranslation();
+
+    const [isProcessing, setProcessing] = useState(false);
+    const [uploadedGifInfo, setUploadedGifInfo] = useState();
+
+    function doUpload() {
+        setProcessing(true);
+        upload(recording, (uploadResponse) => {
+            setProcessing(false);
+            setUploadedGifInfo(uploadResponse);
+        },
+        /* addToGallery= */ true);
+    }
+    return <div>
+        <Typography variant="h5">{t("Upload to gallery")}</Typography>
+        <Typography variant="body2">
+            <Trans i18nKey="Upload to gallery disclaimer">
+                Your gif will be uploaded and <a href="/gallery" target="_blank">shared publicly.</a>
+            </Trans>
+        </Typography>
+        <Button disabled={isProcessing} onClick={doUpload} variant="contained" color="primary">
+            {t("Upload to gallery button")}
+        </Button>
+        <ProgressViewer progress={isProcessing ? 0 : undefined} title={t("Uploading GIF")} />
+        {uploadedGifInfo && <div>
+            <Trans i18nKey="Upload success">
+                Upload success, <a href={`/gallery/${uploadedGifInfo.gifID}`} target="_blank">click here</a>.
+            </Trans>
+        </div>}
+    </div>;
+}
+
+function ExportModule({ recording }) {
+    const classes = useStyles();
+    const { t } = useTranslation();
+
+    const canvasRef = useRef();
+
+    return <div>
+        <div className={classes.exportContainer}>
+            <GifFileExporter
+                recording={recording}
+                canvas={canvasRef.current}
+            />
         </div>
 
+        <div className={classes.exportContainer}>
+            <GifGalleryUploader
+                recording={recording} />
+        </div>
+
+        {/* Invisible canvas for rendering. */}
+        <div
+            className={classes.canvas}>
+            <canvas ref={canvasRef}></canvas>
+        </div>
     </div>;
 }
 export default ExportModule;
