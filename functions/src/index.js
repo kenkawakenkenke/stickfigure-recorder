@@ -4,8 +4,14 @@ firebase.initializeApp(functions.config().firebase)
 
 const handleRecording = require("./gif_uploader.js");
 
+const runtimeOpts = {
+    timeoutSeconds: 540,
+    memory: '1GB'
+};
+
 exports.uploadGifRecording = functions
     .region("asia-northeast1")
+    .runWith(runtimeOpts)
     .https.onCall(async (data, context) => {
         // Params
         const recording = data.recording;
