@@ -65,7 +65,7 @@ function ExportSizeControl({ recording, editCallback }) {
             value={recording.exportWidth || recording.frames[0].videoWidth}
             onChange={(e) => {
                 const newRecording = JSON.parse(JSON.stringify(recording));
-                const newWidth = e.target.value;
+                const newWidth = parseInt(e.target.value);
                 newRecording.exportWidth = newWidth;
                 newRecording.exportHeight = constrainHeight(newWidth);
                 editCallback(newRecording);
@@ -77,7 +77,7 @@ function ExportSizeControl({ recording, editCallback }) {
             value={recording.exportHeight || recording.frames[0].videoHeight}
             onChange={(e) => {
                 const newRecording = JSON.parse(JSON.stringify(recording));
-                const newHeight = e.target.value;
+                const newHeight = parseInt(e.target.value);
                 newRecording.exportHeight = newHeight;
                 newRecording.exportWidth = constrainWidth(newHeight);
                 editCallback(newRecording);
