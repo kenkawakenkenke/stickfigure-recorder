@@ -65,6 +65,9 @@ async function handleRecording(storage, firestore, recording, addToGallery) {
     if (addToGallery) {
         doAddToGallery(firestore, gifID, recording, url);
     }
-    return url;
+    return {
+        url,
+        gifID,
+    };
 }
 module.exports = handleRecording;

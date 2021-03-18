@@ -14,7 +14,7 @@ exports.uploadGifRecording = functions
         const storage = firebase.storage();
         const firestore = firebase.firestore();
 
-        const url = await handleRecording(storage, firestore, recording, addToGallery);
-        console.log("saved", url);
-        return url;
+        const response = await handleRecording(storage, firestore, recording, addToGallery);
+        console.log("saved", response.url);
+        return response;
     });
