@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
         position: "relative",
     },
     canvas: {
+        display: "none",
     }
 }));
 
@@ -26,6 +27,7 @@ function GifRenderModule({ recording }) {
     const { t } = useTranslation();
 
     const [rendering, setRendering] = useState(false);
+    const [progress, setProgress] = useState();
     const canvasRef = useRef();
 
     const startRenderGif = () => {
@@ -34,19 +36,17 @@ function GifRenderModule({ recording }) {
             if (!recording.frames.length) {
                 throw "nothing to export";
             }
-            console.log("recording length:", recording.frames.length);
-            const width = recording.frames[0].videoWidth;
-            const height = recording.frames[0].videoHeight;
-            console.log(width, height);
+            const drawWidth = recording.exportWidth;
+            const drawHeight = recording.exportHeight;
             var gif = new GIF({
                 workers: 2,
                 quality: 10,
                 workerScript: "/static/gif.worker.js",
-                width,
-                height,
+                width: drawWidth,
+                height: drawHeight,
             });
-            canvasRef.current.width = width;
-            canvasRef.current.height = height;
+            canvasRef.current.width = drawWidth;
+            canvasRef.current.height = drawHeight;
             const ctx = canvasRef.current.getContext('2d');
             const delay = 1000 / recording.framerate;
             for (let index = recording.firstFrame; index < recording.lastFrame; index++) {
@@ -58,7 +58,9 @@ function GifRenderModule({ recording }) {
                     copy: true
                 });
             };
-
+            gif.on('progress', function (progress) {
+                setProgress(progress);
+            });
             gif.on('finished', function (blob) {
                 setRendering(false);
                 console.log("finished");
@@ -67,6 +69,7 @@ function GifRenderModule({ recording }) {
                 a.target = '_blank';
                 a.download = 'stickfigure.gif';
                 a.click();
+                setProgress(undefined);
             });
             gif.render();
         };
@@ -85,6 +88,9 @@ function GifRenderModule({ recording }) {
                 {t("Rendering GIF")}
                 <Loader type="Oval" color="#888888" height={48} width={48}></Loader>
             </div>}
+            {progress && `${Math.floor(progress * 100)}%`}
+
+            {/* Invisible canvas for rendering. */}
             <div
                 className={classes.canvas}>
                 <canvas ref={canvasRef}></canvas>

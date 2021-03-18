@@ -234,6 +234,8 @@ function RecorderModule({ recordingCallback }) {
         // Ensure time always starts at 0.
         normalizeTime(tweakedRecording);
         tweakedRecording.framerate = DEFAULT_FRAMERATE;
+        tweakedRecording.exportWidth = recording.frames[0].videoWidth;
+        tweakedRecording.exportHeight = recording.frames[0].videoHeight;
 
         // Notify parent.
         recordingCallback(tweakedRecording);

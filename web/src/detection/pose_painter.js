@@ -103,47 +103,78 @@ export function drawLine(ctx, fromPoint, toPoint, width) {
     ctx.stroke();
 }
 
-function paintPose(ctx, pose, debugView = false) {
+function paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView = false) {
     const features =
         pose.keypoints.reduce((accum, c) => { accum[c.part] = c; return accum; }, {});
     addSyntheticFeatures(features);
 
     if (debugView) {
-        Object.values(features).forEach(feature => {
-            drawCircle(ctx, feature.position, 5, "red");
-        });
+        const circleRadius = toDrawScale(5);
+        Object.values(features)
+            .map(feature => feature.position)
+            .map(toDrawPoint)
+            .forEach(p => {
+                drawCircle(ctx, p, circleRadius, "red");
+            });
+        const lineWidth = toDrawScale(5);
         debugSegments.forEach(segment => {
-            const points = segment.features.map(feature => features[feature].position);
-            drawLines(ctx, points, 5, "#00ff00");
+            const points = segment.features
+                .map(feature => features[feature].position)
+                .map(toDrawPoint);
+            drawLines(ctx, points, lineWidth, "#00ff00");
         });
-
         return;
     }
 
+    const lineWidth = toDrawScale(20);
     segments.forEach(segment => {
-        const points = segment.features.map(feature => features[feature].position);
-        drawLines(ctx, points, 20);
+        const points = segment.features
+            .map(feature => toDrawPoint(features[feature].position));
+        drawLines(ctx, points, lineWidth);
     });
     // Draw face
-    drawCircle(ctx, features["nose"].position,
-        Math.ceil(distBetween(features["nose"].position, features["neck"].position)));
-
-    const usedFeaturesSet = {};
-    segments.forEach(segment => {
-        segment.features.forEach(feature => usedFeaturesSet[feature] = true);
-    });
+    drawCircle(ctx,
+        toDrawPoint(features["nose"].position),
+        Math.ceil(distBetween(toDrawPoint(features["nose"].position), toDrawPoint(features["neck"].position))));
 }
 
 export default function paintFrame(ctx, frame, backgroundOpacity = 1, debugView = false) {
-    const width = ctx.canvas.width;
-    const height = ctx.canvas.height;
+    // Compute scaling
+    const canvasWidth = ctx.canvas.width;
+    const canvasHeight = ctx.canvas.height;
+    let drawWidth = canvasWidth;
+    let drawHeight = canvasHeight;
+    const videoWidth = frame.videoWidth;
+    const videoHeight = frame.videoHeight;
+    let xOffset = 0;
+    let yOffset = 0;
+    const videoWidthInDrawCoords = videoWidth / videoHeight * drawHeight;
+    const videoHeightInDrawCoords = videoHeight / videoWidth * drawWidth;
+    if (drawWidth > videoWidthInDrawCoords) {
+        xOffset = Math.floor((drawWidth - videoWidthInDrawCoords) / 2);
+        drawWidth = videoWidthInDrawCoords;
+    } else if (drawHeight > videoHeightInDrawCoords) {
+        yOffset = Math.floor((drawHeight - videoHeightInDrawCoords) / 2);
+        drawHeight = videoHeightInDrawCoords;
+    }
+    // Convert a point in video coordinates to draw coordinates.
+    function toDrawPoint(position) {
+        return {
+            x: xOffset + position.x * drawWidth / videoWidth,
+            y: yOffset + position.y * drawHeight / videoHeight,
+        };
+    }
+    // Convert a width in video coordinates to draw coordinates.
+    function toDrawScale(width) {
+        return width * drawWidth / videoWidth;
+    }
 
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx.fillStyle = `rgba(255,255,255,${backgroundOpacity})`;
     if (frame.dropped) {
         ctx.fillStyle = "gray";
     }
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    frame.poses.forEach(pose => paintPose(ctx, pose, debugView));
+    frame.poses.forEach(pose => paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView));
 }
