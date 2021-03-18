@@ -58,7 +58,21 @@ async function doAddToGallery(firestore, gifID, recording, url) {
             }
         });
 }
+
+function fitToSize(recording, maxSize) {
+    if (recording.exportWidth <= maxSize && recording.exportHeight <= maxSize) {
+        return;
+    }
+    if (recording.exportWidth > recording.exportHeight) {
+        recording.exportHeight = recording.exportHeight * maxSize / recording.exportWidth;
+        recording.exportWidth = maxSize;
+        return;
+    }
+    recording.exportWidth = recording.exportWidth * maxSize / recording.exportHeight;
+    recording.exportHeight = maxSize;
+}
 async function handleRecording(storage, firestore, recording, addToGallery) {
+    fitToSize(recording, 280);
     const buffer = renderToGif(recording);
     const gifID = uuid();
     const url = await uploadToBucket(storage, gifID, buffer);
