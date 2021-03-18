@@ -29,7 +29,14 @@
             "Allow multiple people estimation": "Allow multiple people estimation (could make the framerate slower)",
             "Playback speed": "Playback speed (FPS)",
             "Twitter Share text": "Stick Figure Recorder: Record a stick figure gif with your webcam! @kenkawakenkenke",
-            "SNS Share text": "Stick Figure Recorder: Record a stick figure gif with your webcam! @kenkawakenkenke"
+            "SNS Share text": "Stick Figure Recorder: Record a stick figure gif with your webcam! @kenkawakenkenke",
+            "Export size": "Export size",
+            "Width": "Width",
+            "Height": "Height",
+            "Constrain aspect ratio": "Constrain aspect ratio",
+            "Same as video": "Same as video",
+            "1_1": "1:1",
+            "No aspect ratio constraint": "None"
         }
     },
     "ja": {
@@ -62,7 +69,14 @@
             "Allow multiple people estimation": "複数人の検知（少し遅いかもしれません）",
             "Playback speed": "再生速度（フレーム/秒）",
             "Twitter Share text": "棒人間メイカー: ウェブカメラで棒人間gifを録画しよう！ @kenkawakenkenke",
-            "SNS Share text": "棒人間メイカー: ウェブカメラで棒人間gifを録画しよう！"
+            "SNS Share text": "棒人間メイカー: ウェブカメラで棒人間gifを録画しよう！",
+            "Export size": "出力サイズ",
+            "Width": "幅",
+            "Height": "高さ",
+            "Constrain aspect ratio": "アスペクト比",
+            "Same as video": "ビデオと同じ",
+            "1_1": "1:1",
+            "No aspect ratio constraint": "制約なし"
         }
     }
 }

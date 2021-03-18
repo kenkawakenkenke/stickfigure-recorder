@@ -5,7 +5,7 @@ import {
 
 import paintFrame from "./pose_painter.js";
 
-const PoseCanvas = ({ className, frame, backgroundOpacity = 1, debugView = false }) => {
+const PoseCanvas = ({ className, frame, drawWidth, drawHeight, backgroundOpacity = 1, debugView = false }) => {
     const ref = useRef();
     useEffect(() => {
         if (!frame || !ref.current) return;
@@ -17,8 +17,8 @@ const PoseCanvas = ({ className, frame, backgroundOpacity = 1, debugView = false
     return <canvas
         className={className}
         ref={ref}
-        width={frame?.videoWidth || 1}
-        height={frame?.videoHeight || 1}
+        width={drawWidth || frame?.videoWidth || 1}
+        height={drawHeight || frame?.videoHeight || 1}
     >
     </canvas>;
 };

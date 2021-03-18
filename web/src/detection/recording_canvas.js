@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     poseCanvas: {
         border: "solid 1px gray",
         maxWidth: "80%",
+        maxHeight: "80%",
     }
 }));
 
@@ -49,7 +50,10 @@ function RecordingCanvas({ recording, fixFrame }) {
     return <div>
         <PoseCanvas
             className={classes.poseCanvas}
-            frame={recording.frames[currentFrameIndex]} />
+            frame={recording.frames[currentFrameIndex]}
+            drawWidth={recording.exportWidth}
+            drawHeight={recording.exportHeight}
+        />
         <Slider
             value={currentFrameIndex}
             valueLabelDisplay="auto"
