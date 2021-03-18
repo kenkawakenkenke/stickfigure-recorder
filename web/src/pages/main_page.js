@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
     Button, Link, Paper, Typography
 } from "@material-ui/core";
+import PageTemplate from "./page_template.js";
 
 import RecorderModule from "../components/recorder_module.js";
 import EditModule from "../components/edit_module.js";
@@ -13,9 +14,17 @@ import GifRenderModule from "../components/gif_render_module.js";
 import { Trans } from 'react-i18next';
 import { useTranslation } from 'react-i18next';
 
+import { TwitterFollowButton } from 'react-twitter-embed';
+import {
+    FacebookShareButton,
+    FacebookIcon,
+    TwitterShareButton,
+    TwitterIcon
+} from 'react-share';
+
 const useStyles = makeStyles((theme) => ({
     root: {
-        margin: "24px",
+        // margin: "24px",
     },
     descriptionCard: {
     },
@@ -23,45 +32,16 @@ const useStyles = makeStyles((theme) => ({
         marginTop: "24px",
         padding: "8px",
     },
-    smallGif: {
-        width: "80px",
-    },
     largeGif: {
         maxWidth: "100%",
     }
 }));
 
-// From: https://qiita.com/qrusadorz/items/14972b6e069feaf777a9
-function AdsCard(props) {
-    useEffect(() => {
-        if (window.adsbygoogle/* && process.env.NODE_ENV !== "development"*/) {
-            window.adsbygoogle.push({});
-        }
-    }, [])
-
-    return (
-        <ins className="adsbygoogle"
-            style={{ "display": "block" }}
-            data-ad-client={process.env.REACT_APP_GOOGLE_AD_CLIENT}
-            data-ad-slot={process.env.REACT_APP_GOOGLE_AD_SLOT}
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-    );
-}
-
 function PageDescription() {
     const classes = useStyles();
+    const { t } = useTranslation();
 
     return <div className={classes.descriptionCard}>
-        <Typography variant="h3">
-            <Trans>Stickfigure Recorder</Trans>
-        </Typography>
-        <div>
-            <img src="/imgs/small_dance.gif" alt="dancing gif" className={classes.smallGif} />
-            <img src="/imgs/small_exercise.gif" alt="working out gif" className={classes.smallGif} />
-            <img src="/imgs/small_fighting.gif" alt="fighting gif" className={classes.smallGif} />
-            <img src="/imgs/small_running.gif" alt="running gif" className={classes.smallGif} />
-        </div>
         <Trans>Create animated stickfigure gifs!</Trans>
         <div>
             <img src="/imgs/stickfigure_recording.gif" alt="stickfigure recording gif" className={classes.largeGif} />
@@ -79,12 +59,28 @@ function PageDescription() {
             </p>
             <p>
                 <Trans i18nKey="openSourcedHere">
-                    The entire website is open sourced here:
+                    The entire website is <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank" rel="noreferrer">open sourced on Github.</a>
                 </Trans>
             </p>
-            <a href="https://github.com/kenkawakenkenke/stickfigure-recorder" target="_blank" rel="noreferrer"><img src="https://gh-card.dev/repos/kenkawakenkenke/stickfigure-recorder.svg" alt="stickfigure recorder github info" /></a>
+            <div>
+                <TwitterFollowButton screenName={'kenkawakenkenke'} />
+                <FacebookShareButton url={["http://stickfigure-recorder.web.app/"]} quote={[t("SNS Share text")]}>
+                    <FacebookIcon size={32} round />
+                </FacebookShareButton>
+                <TwitterShareButton
+                    url={["http://stickfigure-recorder.web.app/"]}
+                    title={[t("Twitter Share text")]}>
+                    <TwitterIcon size={32} round />
+                </TwitterShareButton>
+            </div>
         </div>
     </div >
+}
+
+function BottomBar() {
+    return <div>
+        Terms and conditions
+    </div>
 }
 
 function MainPage() {
@@ -96,7 +92,7 @@ function MainPage() {
     const doReset = () => {
         setRecording(undefined);
     }
-    return <div className={classes.root}>
+    return <PageTemplate>
         <div>
             <PageDescription />
         </div>
@@ -125,8 +121,6 @@ function MainPage() {
             <Typography variant="h4">3. {t("Export")}</Typography>
             {recording && <GifRenderModule recording={recording} />}
         </Paper >
-        <AdsCard />
-
-    </div >;
+    </PageTemplate >;
 }
 export default MainPage;

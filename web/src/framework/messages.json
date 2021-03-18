@@ -5,7 +5,7 @@
             "Create animated stickfigure gifs!": "Create animated stick figure gifs just by recording youself with your webcam!",
             "detailedDescription1": "This uses Google's <1>PoseNet</1> to estimate your pose from webcam images and render stick figures, which can then be exported as animated gifs. Amazingly PoseNet lets this tool run entirely in your browser (probably not so well on mobile though.)",
             "detailedDescription2": "I made this when I needed lots of generic stickfigure gifs for <1>another website</1>, but couldn't find any large-enough collection of gifs.",
-            "openSourcedHere": "The entire website is open sourced here:",
+            "openSourcedHere": "The entire website is <1>open sourced on Github.</1>",
             "TitleRecord":"Record!",
             "Record!":"Record",
             "Stop":"Stop",
@@ -27,7 +27,9 @@
             "Loading PoseNet": "Loading PoseNet",
             "Smoothing window": "Smoothing (higher makes your stick figures smooth but slow)",
             "Allow multiple people estimation": "Allow multiple people estimation (could make the framerate slower)",
-            "Playback speed": "Playback speed (FPS)"
+            "Playback speed": "Playback speed (FPS)",
+            "Twitter Share text": "Stick Figure Recorder: Record a stick figure gif with your webcam! @kenkawakenkenke",
+            "SNS Share text": "Stick Figure Recorder: Record a stick figure gif with your webcam! @kenkawakenkenke"
         }
     },
     "ja": {
@@ -36,7 +38,7 @@
             "Create animated stickfigure gifs!": "ウェブカメラで録画するだけで棒人間gifを作ろう！",
             "detailedDescription1": "Googleの<1>PoseNet</1>を使ってウェブカメラの画像から姿勢を推定し、棒人間gifに変換するツールです。全部ブラウザで動きます。",
             "detailedDescription2":"以前、<2>別のサイト</2>を作るときに大量の棒人間gifが欲しくなり、世の中にあるフリー素材では不充分だったためこういうツールを作りました。",
-            "openSourcedHere": "このウェブサイトは全てオープンソースになっています：",
+            "openSourcedHere": "このウェブサイトは<1>Githubでオープンソースしてます</1>",
             "TitleRecord":"録画する",
             "Record!":"録画開始",
             "Stop":"停止",
@@ -58,7 +60,9 @@
             "Loading PoseNet": "Posenetロード中・・・",
             "Smoothing window": "平滑化（高いほどヌルヌルに（その代わりゆっくりと）動きます）",
             "Allow multiple people estimation": "複数人の検知（少し遅いかもしれません）",
-            "Playback speed": "再生速度（フレーム/秒）"
+            "Playback speed": "再生速度（フレーム/秒）",
+            "Twitter Share text": "棒人間メイカー: ウェブカメラで棒人間gifを録画しよう！ @kenkawakenkenke",
+            "SNS Share text": "棒人間メイカー: ウェブカメラで棒人間gifを録画しよう！"
         }
     }
 }
