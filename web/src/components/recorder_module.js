@@ -220,6 +220,7 @@ function RecorderModule({ recordingCallback }) {
     const [posenetLevel, setPosenetLevel] = useState("high");
     const [smoothingWindow, setSmoothingWindow] = useState(4);
     const [allowMultiplePoses, setAllowMultiplePoses] = useState(false);
+    const [backCamera, setBackCamera] = useState(false);
 
     const posenet = usePosenet(posenetLevel);
     const [videoElement, setVideoElement] = useState();
@@ -276,6 +277,12 @@ function RecorderModule({ recordingCallback }) {
                             name="checkedF" />} label={t("Allow multiple people estimation")} />
                     </div>
                     <div className={classes.formControl}>
+                        <FormControlLabel control={<Checkbox
+                            checked={backCamera}
+                            onChange={(event) => setBackCamera(event.target.checked)}
+                        />} label={t("Use the back camera")} />
+                    </div>
+                    <div className={classes.formControl}>
                         <FormControl className={classes.formControl} component="fieldset">
                             <FormLabel component="legend">{t("Smoothing window")}</FormLabel>
                             <Slider
@@ -317,7 +324,8 @@ function RecorderModule({ recordingCallback }) {
 
                     {isRecording && <CameraVideo
                         className={classes.videoCanvas}
-                        readyCallback={setVideoElement} />}
+                        readyCallback={setVideoElement}
+                        backCamera={backCamera} />}
                     {debugView && <PoseCanvas
                         className={debugView ? classes.debugCanvas : classes.canvas}
                         frame={recording && recording.frames.length && recording.frames[recording.frames.length - 1]}

@@ -4,11 +4,11 @@ import {
     useRef,
 } from "react";
 
-async function setupCamera(video) {
+async function setupCamera(video, backCamera) {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const stream = await navigator.mediaDevices.getUserMedia({
             'audio': false,
-            'video': true
+            'video': { facingMode: backCamera ? 'environment' : 'user' }
         });
         video.srcObject = stream;
 
@@ -24,14 +24,14 @@ async function setupCamera(video) {
     }
 }
 
-function CameraVideo({ readyCallback, className }) {
+function CameraVideo({ readyCallback, backCamera, className }) {
     const videoRef = useRef();
 
     const readyCallbackRef = useCallback(readyCallback, [readyCallback]);
     useEffect(() => {
         const video = videoRef.current;
         async function load() {
-            await setupCamera(video);
+            await setupCamera(video, backCamera);
             video.play();
 
             readyCallbackRef(video);
