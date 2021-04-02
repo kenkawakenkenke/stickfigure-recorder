@@ -98,7 +98,9 @@
             "Play":"再生",
             "Pause":"一時停止",
             "Export still image": "静止画像をダウンロードする",
-            "Do export still image button": ".pngファイルをダウンロードする"
+            "Do export still image button": ".pngファイルをダウンロードする",
+            "Select items": "アイテム選択",
+            "Stop sign":"禁止サイン"
         }
     }
 }

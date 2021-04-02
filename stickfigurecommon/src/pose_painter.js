@@ -1,4 +1,5 @@
 import { avgPosition, distBetween, extendPosition } from "./point_util.js";
+import StopSignIcon from "../imgs/stopsign.svg";
 
 const segments = [
     {
@@ -190,6 +191,32 @@ function paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView = false) {
         Math.ceil(distBetween(toDrawPoint(features["headCenter"].position), toDrawPoint(features["neck"].position))));
 }
 
+let stopSignImage;
+stopSignImage = new Image();
+// stopSignImage.onload = function () {
+//     ctx.drawImage(img, 0, 0);
+// }
+stopSignImage.src = StopSignIcon;//"imgs/stopsign.svg";
+export { stopSignImage };
+
+function drawStopSign(ctx, canvasWidth, canvasHeight) {
+    const padding = canvasWidth * 0.01;
+    const signWidth = Math.min(canvasWidth, canvasHeight) - padding * 2;
+    ctx.drawImage(stopSignImage,
+        (canvasWidth - signWidth) / 2,
+        (canvasHeight - signWidth) / 2,
+        signWidth, signWidth);
+}
+
+function drawItem(ctx, item, canvasWidth, canvasHeight) {
+    switch (item.type) {
+        case "stopsign":
+            drawStopSign(ctx, canvasWidth, canvasHeight);
+        default:
+        // nope
+    }
+}
+
 export default function paintFrame(ctx, frame, backgroundOpacity = 1, debugView = false) {
     // Compute scaling
     const canvasWidth = ctx.canvas.width;
@@ -227,6 +254,9 @@ export default function paintFrame(ctx, frame, backgroundOpacity = 1, debugView 
         ctx.fillStyle = "gray";
     }
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
     frame.poses.forEach(pose => paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView));
+
+    if (frame.items) {
+        frame.items.forEach(item => drawItem(ctx, item, canvasWidth, canvasHeight))
+    }
 }

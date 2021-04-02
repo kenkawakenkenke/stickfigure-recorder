@@ -14,6 +14,7 @@ import PoseSmoother from "../detection/smoother.js";
 import Loader from 'react-loader-spinner';
 import { normalizeTime } from "../detection/recording_editor.js";
 import { useTranslation } from 'react-i18next';
+import ItemSelectorPanel from "./item_selector.js";
 
 import common from "stickfigurecommon";
 
@@ -156,7 +157,7 @@ async function multiPoseDetection(posenet, videoElement) {
     });
 }
 
-function useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses) {
+function useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses, selectedItems) {
     const { t } = useTranslation();
     const [recording, setRecording] = useState({
         frames: [],
@@ -188,6 +189,8 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
         frame.videoHeight = videoElement.videoHeight;
         frame.t = timeSinceStartMs;
 
+        frame.items = selectedItems;
+
         if (isDead()) {
             return;
         }
@@ -204,7 +207,7 @@ function useRecording(posenet, videoElement, isRecording, smoothingWindow, allow
     },
         /* allowAnimate= */ isRecording && posenet && videoElement,
         /* fps= */ DEFAULT_FRAMERATE,
-    /* dependencies= */[videoElement]);
+    /* dependencies= */[videoElement, selectedItems]);
     // Note: we don't include smoothingWindow and allowMultiplePoses in dependencies because
     // these never change while the animation is running.
     return [recording, loadingMessage];
@@ -215,6 +218,7 @@ function RecorderModule({ recordingCallback }) {
     const { t } = useTranslation();
 
     const [isRecording, setIsRecording] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
 
     // Recording settings
     const [posenetLevel, setPosenetLevel] = useState("high");
@@ -224,7 +228,7 @@ function RecorderModule({ recordingCallback }) {
 
     const posenet = usePosenet(posenetLevel);
     const [videoElement, setVideoElement] = useState();
-    const [recording, loadingMessage] = useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses);
+    const [recording, loadingMessage] = useRecording(posenet, videoElement, isRecording, smoothingWindow, allowMultiplePoses, selectedItems);
 
     const startRecord = () => {
         setIsRecording(true);
@@ -341,6 +345,11 @@ function RecorderModule({ recordingCallback }) {
                 </div>
             </div>
         }
+        <ItemSelectorPanel
+            selectedItems={selectedItems}
+            selectedItemsCallback={setSelectedItems}
+        />
+
     </div >;
 }
 export default RecorderModule;
