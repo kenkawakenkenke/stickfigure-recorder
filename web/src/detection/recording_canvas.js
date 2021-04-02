@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function RecordingCanvas({ recording, fixFrame }) {
+function RecordingCanvas({ recording, fixFrame, frameIndexCallback }) {
     const { t } = useTranslation();
     const classes = useStyles();
     const [currentFrameIndex, setCurrentFrameIndex] = useState(recording.firstFrame);
@@ -36,12 +36,18 @@ function RecordingCanvas({ recording, fixFrame }) {
 
     useEffect(() => {
         if (mergedFixFrame >= 0) {
-            setCurrentFrameIndex(mergedFixFrame);
-            frameIndexRef.current = mergedFixFrame;
+            // setCurrentFrameIndex(mergedFixFrame);
+            // frameIndexRef.current = mergedFixFrame;
+            setFrameIndex(mergedFixFrame);
         }
     }, [mergedFixFrame]);
 
     const frameIndexRef = useRef(0);
+    function setFrameIndex(frameIndex) {
+        frameIndexRef.current = frameIndex;
+        setCurrentFrameIndex(frameIndex);
+        frameIndexCallback(frameIndex);
+    }
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, isDead) => {
         let frameIndex = frameIndexRef.current + 1;
         if (frameIndex < recording.firstFrame) {
@@ -50,9 +56,10 @@ function RecordingCanvas({ recording, fixFrame }) {
         if (recording.lastFrame < frameIndex) {
             frameIndex = recording.firstFrame;
         }
-        frameIndexRef.current = frameIndex;
+        // frameIndexRef.current = frameIndex;
         if (!isDead()) {
-            setCurrentFrameIndex(frameIndex);
+            setFrameIndex(frameIndex);
+            // setCurrentFrameIndex(frameIndex);
         }
     },
         /* allowAnimate= */ recording && recording.frames.length > 0 && !(mergedFixFrame >= 0) && isPlaying,

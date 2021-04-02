@@ -125,6 +125,30 @@ function GifFileExporter({ recording, canvas }) {
     </div>;
 }
 
+function StillImageExporter({ recording, selectedFrameIndex, canvas }) {
+    const { t } = useTranslation();
+
+    function doExport() {
+        canvas.width = recording.exportWidth;
+        canvas.height = recording.exportHeight;
+        const ctx = canvas.getContext('2d');
+        const frame = recording.frames[selectedFrameIndex];
+        common.paintFrame(ctx, frame);
+        var img = canvas.toDataURL("image/png");
+
+        var link = document.createElement('a');
+        link.download = 'stickfigure.png';
+        link.href = img;
+        link.click();
+    }
+    return <div>
+        <Typography variant="h5">{t("Export still image")}</Typography>
+        <Button onClick={doExport} variant="contained" color="primary">
+            {t("Do export still image button")}
+        </Button>
+    </div>;
+}
+
 function GifGalleryUploader({ recording }) {
     const { t } = useTranslation();
 
@@ -161,7 +185,7 @@ function GifGalleryUploader({ recording }) {
     </div>;
 }
 
-function ExportModule({ recording }) {
+function ExportModule({ recording, selectedFrameIndex }) {
     const classes = useStyles();
     const { t } = useTranslation();
 
@@ -172,6 +196,13 @@ function ExportModule({ recording }) {
             <GifFileExporter
                 recording={recording}
                 canvas={canvasRef.current}
+            />
+        </div>
+        <div className={classes.exportContainer}>
+            <StillImageExporter
+                recording={recording}
+                canvas={canvasRef.current}
+                selectedFrameIndex={selectedFrameIndex}
             />
         </div>
 

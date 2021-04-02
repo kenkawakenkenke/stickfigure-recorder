@@ -102,7 +102,7 @@ function ExportSizeControl({ recording, editCallback }) {
 
     </div >;
 }
-function EditModule({ recording, editCallback }) {
+function EditModule({ recording, editCallback, frameIndexCallback }) {
     const classes = useStyles();
     const { t } = useTranslation();
 
@@ -115,6 +115,7 @@ function EditModule({ recording, editCallback }) {
         <RecordingCanvas
             recording={recording}
             fixFrame={fixFrame}
+            frameIndexCallback={frameIndexCallback}
         />
 
         <div className={classes.formControl}>

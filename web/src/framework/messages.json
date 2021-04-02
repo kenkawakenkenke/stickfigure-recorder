@@ -17,8 +17,8 @@
             "Edit":"Edit",
             "Export":"Export",
             "Set the start and end range to export":"Set the start and end range to export:",
-            "Do export gif": "Download .GIF file",
-            "Do export gif button": "Download",
+            "Do export gif": "Download .GIF animation",
+            "Do export gif button": "Download .gif file",
             "Rendering GIF": "Rendering GIF...",
             "Upload to gallery": "Upload GIF to gallery",
             "Upload to gallery disclaimer": "Your gif will be uploaded and <1>shared publicly in our gallery</1>.",
@@ -44,7 +44,9 @@
             "Same as video": "Same as video",
             "1_1": "1:1",
             "No aspect ratio constraint": "None",
-            "Gallery description": "These stick figures were recently uploaded by users:"
+            "Gallery description": "These stick figures were recently uploaded by users:",
+            "Export still image": "Download still image",
+            "Do export still image button": "Download .png file"
         }
     },
     "ja": {
@@ -94,7 +96,9 @@
             "No aspect ratio constraint": "制約なし",
             "Gallery description": "最近ユーザーによってアップロードされた棒人間です。",
             "Play":"再生",
-            "Pause":"一時停止"
+            "Pause":"一時停止",
+            "Export still image": "静止画像をダウンロードする",
+            "Do export still image button": ".pngファイルをダウンロードする"
         }
     }
 }
