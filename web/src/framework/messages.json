@@ -92,7 +92,9 @@
             "Same as video": "ビデオと同じ",
             "1_1": "1:1",
             "No aspect ratio constraint": "制約なし",
-            "Gallery description": "最近ユーザーによってアップロードされた棒人間です。"
+            "Gallery description": "最近ユーザーによってアップロードされた棒人間です。",
+            "Play":"再生",
+            "Pause":"一時停止"
         }
     }
 }

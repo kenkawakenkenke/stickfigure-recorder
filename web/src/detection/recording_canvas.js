@@ -4,11 +4,15 @@ import {
     useState,
 } from "react";
 import {
+    Button,
     Slider
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import PoseCanvas from "./pose_canvas";
 import useAnimationFrame from "../common/animation_frame_hook.js";
+import { useTranslation } from "react-i18next";
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import PauseIcon from '@material-ui/icons/Pause';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,13 +26,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function RecordingCanvas({ recording, fixFrame }) {
+    const { t } = useTranslation();
     const classes = useStyles();
     const [currentFrameIndex, setCurrentFrameIndex] = useState(recording.firstFrame);
+    const [isPlaying, setIsPlaying] = useState(true);
+
+    const [scrollPosition, setScrollPosition] = useState();
+    const mergedFixFrame = fixFrame >= 0 ? fixFrame : scrollPosition;
+
     useEffect(() => {
-        if (fixFrame >= 0) {
-            setCurrentFrameIndex(fixFrame);
+        if (mergedFixFrame >= 0) {
+            setCurrentFrameIndex(mergedFixFrame);
+            frameIndexRef.current = mergedFixFrame;
         }
-    }, [fixFrame]);
+    }, [mergedFixFrame]);
 
     const frameIndexRef = useRef(0);
     useAnimationFrame(async (timeSinceLastFrameMs, timeSinceStartMs, isDead) => {
@@ -44,7 +55,7 @@ function RecordingCanvas({ recording, fixFrame }) {
             setCurrentFrameIndex(frameIndex);
         }
     },
-        /* allowAnimate= */ recording && recording.frames.length > 0 && !(fixFrame >= 0),
+        /* allowAnimate= */ recording && recording.frames.length > 0 && !(mergedFixFrame >= 0) && isPlaying,
         /* fps= */ recording.framerate || 12,
         /* dependencies=*/[recording]);
     return <div>
@@ -59,7 +70,18 @@ function RecordingCanvas({ recording, fixFrame }) {
             valueLabelDisplay="auto"
             min={0}
             max={recording.frames.length - 1}
+            onChange={(e, newValue) => setScrollPosition(newValue)}
+            onChangeCommitted={(e, newValue) => setScrollPosition(undefined)}
         />
-    </div>
+        {isPlaying ?
+            <Button onClick={() => setIsPlaying(false)}
+                variant="contained"
+                startIcon={<PauseIcon />}>{t("Pause")}
+            </Button>
+            : <Button onClick={() => setIsPlaying(true)}
+                variant="contained"
+                startIcon={<PlayArrowIcon />}>{t("Play")}
+            </Button>}
+    </div >
 }
 export default RecordingCanvas;
