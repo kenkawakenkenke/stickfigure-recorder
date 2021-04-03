@@ -71,7 +71,7 @@ async function exportToGif(recording, canvas, progressCallback) {
     const delay = 1000 / recording.framerate;
     for (let index = recording.firstFrame; index < recording.lastFrame; index++) {
         const frame = recording.frames[index];
-        common.paintFrame(ctx, frame);
+        common.Painter.paintFrame(ctx, frame);
         // add an image element
         gif.addFrame(ctx, {
             delay,
@@ -133,7 +133,7 @@ function StillImageExporter({ recording, selectedFrameIndex, canvas }) {
         canvas.height = recording.exportHeight;
         const ctx = canvas.getContext('2d');
         const frame = recording.frames[selectedFrameIndex];
-        common.paintFrame(ctx, frame);
+        common.Painter.paintFrame(ctx, frame);
         var img = canvas.toDataURL("image/png");
 
         var link = document.createElement('a');

@@ -1,9 +1,7 @@
-import paintFrame from "./pose_painter.js";
+import * as Painter from "./painter/pose_painter.js";
 import * as PointUtil from "./point_util.js";
-import * as Items from "./items.js";
 
 export default {
-    paintFrame,
+    Painter,
     PointUtil,
-    Items,
 };

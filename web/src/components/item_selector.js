@@ -54,7 +54,7 @@ function ItemSelectorPanel({ selectedItems, selectedItemsCallback }) {
                     }
                 }}
             >
-                <img src={common.Items.StopSignIcon} className={classes.smallIcon} />
+                <img src={common.Painter.Items.StopSignIcon} className={classes.smallIcon} />
                 {t("Stop sign")}
             </ToggleButton>
         </div>
