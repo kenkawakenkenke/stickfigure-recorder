@@ -215,11 +215,10 @@ function paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView = false) {
 // stopSignImage.src = StopSignIcon;//"imgs/stopsign.svg";
 // export { stopSignImage };
 
-function drawStopSign(ctx, canvasWidth, canvasHeight) {
+function drawIconImage(ctx, canvasWidth, canvasHeight, iconImage) {
     const padding = canvasWidth * 0.01;
     const signWidth = Math.min(canvasWidth, canvasHeight) - padding * 2;
-    const img = Items.getStopSignImage();
-    ctx.drawImage(img,
+    ctx.drawImage(iconImage,
         (canvasWidth - signWidth) / 2,
         (canvasHeight - signWidth) / 2,
         signWidth, signWidth);
@@ -228,7 +227,9 @@ function drawStopSign(ctx, canvasWidth, canvasHeight) {
 function drawItem(ctx, item, canvasWidth, canvasHeight) {
     switch (item.type) {
         case "stopsign":
-            drawStopSign(ctx, canvasWidth, canvasHeight);
+        case "allowsign":
+            const iconImage = Items.getImage(item.type);
+            drawIconImage(ctx, canvasWidth, canvasHeight, iconImage);
         default:
         // nope
     }

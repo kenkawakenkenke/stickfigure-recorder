@@ -23,6 +23,7 @@ function ItemSelectorPanel({ selectedItems, selectedItemsCallback }) {
     const { t } = useTranslation();
 
     const stopSignSelected = selectedItems.some(item => item.type === "stopsign");
+    const allowSignSelected = selectedItems.some(item => item.type === "allowsign");
 
     function createNewItem(type) {
         selectedItemsCallback(
@@ -44,6 +45,7 @@ function ItemSelectorPanel({ selectedItems, selectedItemsCallback }) {
             </Typography>
         </div>
         <div className={classes.selectionItemRow}>
+
             <ToggleButton
                 selected={stopSignSelected}
                 onChange={() => {
@@ -57,6 +59,21 @@ function ItemSelectorPanel({ selectedItems, selectedItemsCallback }) {
                 <img src={common.Painter.Items.StopSignIcon} className={classes.smallIcon} />
                 {t("Stop sign")}
             </ToggleButton>
+
+            <ToggleButton
+                selected={allowSignSelected}
+                onChange={() => {
+                    if (allowSignSelected) {
+                        removeItem("allowsign");
+                    } else {
+                        createNewItem("allowsign");
+                    }
+                }}
+            >
+                <img src={common.Painter.Items.AllowSignIcon} className={classes.smallIcon} />
+                {t("Allow sign")}
+            </ToggleButton>
+
         </div>
 
     </div>;
