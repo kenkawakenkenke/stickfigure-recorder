@@ -20,6 +20,7 @@
     "gif-encoder-2": "^1.0.5",
     "install": "^0.13.0",
     "npm": "^7.6.3",
+    "regenerator-runtime": "^0.13.7",
     "stickfigurecommon": "file:./sub_modules/stickfigurecommon",
     "uuid": "^8.3.2"
   },
