@@ -1,6 +1,21 @@
 const GIFEncoder = require('gif-encoder-2');
+const { createCanvas, loadImage } = require('canvas');
 const common = require("stickfigurecommon");
-const { createCanvas } = require('canvas');
+
+let initialized = false;
+async function initGifUploader() {
+    if (initialized) {
+        return;
+    }
+    await common.Painter.init((image, callback) => {
+        loadImage(decodeURIComponent(image)).then(loadedImage => {
+            callback(loadedImage);
+        });
+    });
+    initialized = true;
+}
+exports.initGifUploader = initGifUploader;
+
 const { v4: uuid } = require("uuid");
 
 function renderToGif(recording) {
@@ -16,7 +31,9 @@ function renderToGif(recording) {
     encoder.start();
     for (let index = recording.firstFrame; index < recording.lastFrame; index++) {
         const frame = recording.frames[index];
-        common.paintFrame(ctx, frame);
+        common.Painter.paintFrame(ctx, frame);
+        // console.log("Items:", common.Painter);
+        // console.log(common.Icons.StopSignIcon);
         // add an image element
         encoder.addFrame(ctx);
     };
@@ -76,17 +93,21 @@ function fitToSize(recording, maxSize) {
     recording.exportWidth = recording.exportWidth * maxSize / recording.exportHeight;
     recording.exportHeight = maxSize;
 }
-async function handleRecording(storage, firestore, recording, addToGallery) {
+async function handleRecording(storage, firestore, recording, addToGallery, doUpload = true) {
     fitToSize(recording, 280);
     const buffer = renderToGif(recording);
     const gifID = uuid();
-    const url = await uploadToBucket(storage, gifID, buffer);
-    if (addToGallery) {
-        doAddToGallery(firestore, gifID, recording, url);
+    let url;
+    if (doUpload) {
+        url = await uploadToBucket(storage, gifID, buffer);
+        if (addToGallery) {
+            doAddToGallery(firestore, gifID, recording, url);
+        }
     }
     return {
         url,
         gifID,
+        buffer,
     };
 }
-module.exports = handleRecording;
+exports.handleRecording = handleRecording;

@@ -81,6 +81,7 @@ function MainPage() {
     const { t } = useTranslation();
 
     const [recording, setRecording] = useState();
+    const [selectedFrameIndex, setSelectedFrameIndex] = useState(-1);
 
     const doReset = () => {
         setRecording(undefined);
@@ -93,7 +94,10 @@ function MainPage() {
         {/* Record */}
         <Paper elevation={4} className={classes.moduleCard}>
             <Typography variant="h4">1. <Trans i18nKey="TitleRecord">Record!</Trans></Typography>
-            {!recording && <RecorderModule recordingCallback={newRecording => setRecording(newRecording)} />}
+            {!recording && <RecorderModule recordingCallback={newRecording => {
+                setRecording(newRecording);
+                setSelectedFrameIndex(0);
+            }} />}
             {recording &&
                 <Button onClick={doReset} variant="contained" color="secondary">
                     {t("Start again")}
@@ -106,13 +110,14 @@ function MainPage() {
             {recording && <EditModule
                 recording={recording}
                 editCallback={newRecording => setRecording(newRecording)}
+                frameIndexCallback={setSelectedFrameIndex}
             />}
         </Paper >
 
         {/* Render */}
         <Paper elevation={4} className={classes.moduleCard}>
             <Typography variant="h4">3. {t("Export")}</Typography>
-            {recording && <ExportModule recording={recording} />}
+            {recording && <ExportModule recording={recording} selectedFrameIndex={selectedFrameIndex} />}
         </Paper >
     </PageTemplate >;
 }

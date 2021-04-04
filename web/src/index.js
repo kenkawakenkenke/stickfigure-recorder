@@ -7,6 +7,15 @@ import reportWebVitals from './reportWebVitals';
 import "./framework/setup_firebase.js";
 import "./framework/i18n_setup.js";
 
+import common from "stickfigurecommon";
+common.Painter.init((imageSrc, callback) => {
+  const image = new Image();
+  image.onload = function () {
+    callback(image);
+  };
+  image.src = imageSrc;
+});
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

@@ -11,7 +11,7 @@ const PoseCanvas = ({ className, frame, drawWidth, drawHeight, backgroundOpacity
         if (!frame || !ref.current) return;
         const canvas = ref.current;
         const ctx = canvas.getContext('2d');
-        common.paintFrame(ctx, frame, backgroundOpacity, debugView);
+        common.Painter.paintFrame(ctx, frame, backgroundOpacity, debugView);
     }, [frame, backgroundOpacity, debugView]);
 
     return <canvas

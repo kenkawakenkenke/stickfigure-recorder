@@ -1,4 +1,21 @@
-import { avgPosition, distBetween, extendPosition } from "./point_util.js";
+import { avgPosition, distBetween, extendPosition } from "../point_util.js";
+// import StopSignIcon from "../imgs/stopsign.svg";
+import * as Items from "./items.js";
+
+let initialized = false;
+async function init(imageLoader) {
+    if (initialized) {
+        return;
+    }
+    initialized = true;
+
+    await Items.init(imageLoader);
+}
+
+export {
+    init,
+    Items
+};
 
 const segments = [
     {
@@ -190,7 +207,35 @@ function paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView = false) {
         Math.ceil(distBetween(toDrawPoint(features["headCenter"].position), toDrawPoint(features["neck"].position))));
 }
 
-export default function paintFrame(ctx, frame, backgroundOpacity = 1, debugView = false) {
+// let stopSignImage;
+// stopSignImage = new Image();
+// // stopSignImage.onload = function () {
+// //     ctx.drawImage(img, 0, 0);
+// // }
+// stopSignImage.src = StopSignIcon;//"imgs/stopsign.svg";
+// export { stopSignImage };
+
+function drawIconImage(ctx, canvasWidth, canvasHeight, iconImage) {
+    const padding = canvasWidth * 0.01;
+    const signWidth = Math.min(canvasWidth, canvasHeight) - padding * 2;
+    ctx.drawImage(iconImage,
+        (canvasWidth - signWidth) / 2,
+        (canvasHeight - signWidth) / 2,
+        signWidth, signWidth);
+}
+
+function drawItem(ctx, item, canvasWidth, canvasHeight) {
+    switch (item.type) {
+        case "stopsign":
+        case "allowsign":
+            const iconImage = Items.getImage(item.type);
+            drawIconImage(ctx, canvasWidth, canvasHeight, iconImage);
+        default:
+        // nope
+    }
+}
+
+export function paintFrame(ctx, frame, backgroundOpacity = 1, debugView = false) {
     // Compute scaling
     const canvasWidth = ctx.canvas.width;
     const canvasHeight = ctx.canvas.height;
@@ -227,6 +272,9 @@ export default function paintFrame(ctx, frame, backgroundOpacity = 1, debugView 
         ctx.fillStyle = "gray";
     }
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
     frame.poses.forEach(pose => paintPose(ctx, pose, toDrawPoint, toDrawScale, debugView));
+
+    if (frame.items) {
+        frame.items.forEach(item => drawItem(ctx, item, canvasWidth, canvasHeight))
+    }
 }
