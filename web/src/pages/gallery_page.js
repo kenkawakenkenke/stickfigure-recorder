@@ -29,7 +29,7 @@ function GalleryPage({ gifID }) {
     const [gifs, loading, error] = useCollectionDataOnce(
         firebase.firestore().collection("gallery")
             .orderBy("tCreated", "desc")
-            .limit(30),
+            .limit(100),
         { idField: "docKey" }
     );
     if (error) {
